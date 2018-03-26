@@ -1,50 +1,96 @@
-let gameBoard = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+let gameBoard = [
+  ["", "", "", ""],
+  ["", "", "", ""],
+  ["", "", "", ""],
+  ["", "", "", ""]
+];
 
-function draw() {
-  document.querySelector("body").innerHTML =
-    gameBoard[0] +
-    "<br>" +
-    gameBoard[1] +
-    "<br>" +
-    gameBoard[2] +
-    "<br>" +
-    gameBoard[3];
+function draw(board) {
+  let rows = document.querySelectorAll("tr");
+  for (let i = 0; i < 4; i++) {
+    for (let k = 0; k < 4; k++) {
+      let value = board[i][k];
+      let cell = rows[i].cells[k];
+      cell.innerHTML = value;
+
+      if (value == 2) {
+        cell.style.backgroundColor = "#EEE4DB";
+      } else if (value == 4) {
+        cell.style.backgroundColor = "#EBDFC5";
+      } else if (value == 8) {
+        cell.style.backgroundColor = "#F0B37E";
+      } else if (value == 16) {
+        cell.style.backgroundColor = "#F49668";
+      } else if (value == 32) {
+        cell.style.backgroundColor = "#F57E64";
+      } else if (value == 64) {
+        cell.style.backgroundColor = "#F56144";
+      } else if (value == 128) {
+        cell.style.backgroundColor = "#F1CF75";
+      } else if (value == 256) {
+        cell.style.backgroundColor = "#EFCC68";
+      } else if (value == 512) {
+        cell.style.backgroundColor = "#EBCB5E";
+      } else if (value == 1024) {
+        cell.style.backgroundColor = "#EFC549";
+      } else if (value == 2048) {
+        cell.style.backgroundColor = "#EDC43A";
+      } else if (value == 4096) {
+        cell.style.backgroundColor = "#3D3936";
+        cell.style.color = "#FDFDF8";
+      } else {
+        cell.style.backgroundColor = "#CDC1B5";
+      }
+      if (value > 4) {
+        cell.style.color = "#FCFED3";
+      } else {
+        cell.style.color = "#857b72";
+      }
+    }
+  }
 }
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
-function fullBoard(board) {
-  for (let i = 0; i < 4; i++) {
-    for (let j = 0; j < 4; j++) {
-      if (board[i][j] == 0) {
-        return false;
-      }
+Object.prototype.isEmpty = function() {
+  for (let key in this) {
+    if (this.hasOwnProperty(key)) {
+      return false;
     }
   }
   return true;
+};
+
+function directionMove(board) {
+  let dict = {};
+  for (let i = 0; i < 4; i++) {
+    for (let j = 0; j < 4; j++) {}
+  }
+  return dict;
 }
 
-function generateNumber(board, num) {
-  if (fullBoard(board)) {
-    return;
+// collect all empty indexes and randomly choose one to spawn new number
+function placeNewNumber(board, num) {
+  let copy = copyBoard(board);
+
+  let emptyIndexes = [];
+  for (let j = 0; j < 4; j++) {
+    for (k = 0; k < 4; k++) {
+      if (board[j][k] === "") {
+        emptyIndexes.push([j, k]);
+      }
+    }
   }
 
-  count = 0;
-  let copy = [];
-  for (let i = 0; i < 4; i++) {
-    copy.push(board[i].slice(0));
-  }
-  let startVals = [2, 4];
-  while (count < num) {
-    let arr = getRandomInt(4);
-    let pos = getRandomInt(4);
-    if (copy[arr][pos] == 0) {
-      let twoOrFour = startVals[getRandomInt(2)];
-      copy[arr][pos] = twoOrFour;
-      count += 1;
-    }
+  let startVals = [2, 2, 2, 2, 2, 4];
+  for (let j = 0; j < num; j++) {
+    let index = getRandomInt(emptyIndexes.length);
+    let emptySlot = emptyIndexes[index];
+    emptyIndexes.splice(index, 1);
+    let twoOrFour = startVals[getRandomInt(6)];
+    copy[emptySlot[0]][emptySlot[1]] = twoOrFour;
   }
   return copy;
 }
@@ -56,14 +102,12 @@ function scoreKeeper() {
   if (score >= bestScore) {
     bestScore = score;
   }
-  console.log("The score is : " + score);
-  console.log("The best score is : " + bestScore);
 }
 
 function initialize(board) {
   let count = 0;
-  gameBoard = generateNumber(board, 2);
-  draw();
+  gameBoard = placeNewNumber(board, 2);
+  draw(gameBoard);
 }
 
 function slideRowLeft(row) {
@@ -93,18 +137,10 @@ function slideRowLeft(row) {
       currentIndex += 1;
       continue;
     }
-    arr[i] = 0;
+    arr[i] = "";
   }
-
   return arr;
 }
-
-// TODO: change to constant name
-
-let left = 37;
-let up = 38;
-let right = 39;
-let down = 40;
 
 function slideBoardLeft(board) {
   let result = [];
@@ -123,7 +159,7 @@ function printBoard(board) {
 function reverseBoard(board) {
   let result = [];
   for (let i = 0; i < 4; i++) {
-    let row = board[i].splice(0).reverse();
+    let row = board[i].slice().reverse();
     result.push(row);
   }
   return result;
@@ -151,37 +187,86 @@ function bottomRotateBoard(board) {
   return result;
 }
 
-document.addEventListener("keydown", function(key) {
-  if (fullBoard(gameBoard)) {
-    console.log("Cannot add any more numbers, game over!");
-    return;
-  }
-  switch (key.keyCode) {
-    case left:
-      gameBoard = generateNumber(slideBoardLeft(gameBoard), 1);
+function slideBoard(key, board) {
+  let newBoard;
+  switch (key) {
+    case "ArrowLeft":
+      newBoard = slideBoardLeft(board, 1);
       break;
-    case right:
-      let boardReversed = reverseBoard(gameBoard);
+    case "ArrowRight":
+      let boardReversed = reverseBoard(board);
       let slideBoardReversed = slideBoardLeft(boardReversed);
-      gameBoard = generateNumber(reverseBoard(slideBoardReversed), 1);
+      newBoard = reverseBoard(slideBoardReversed);
       break;
-    case up:
-      let upBoardRotated = upRotateBoard(gameBoard);
+    case "ArrowUp":
+      let upBoardRotated = upRotateBoard(board);
       let slideUpBoardRotated = slideBoardLeft(upBoardRotated);
-      gameBoard = generateNumber(upRotateBoard(slideUpBoardRotated), 1);
+      newBoard = upRotateBoard(slideUpBoardRotated);
       break;
-    case down:
-      let bottomBoardRotated = bottomRotateBoard(gameBoard);
+    case "ArrowDown":
+      let bottomBoardRotated = bottomRotateBoard(board);
       let slideBottomBoardRotated = slideBoardLeft(bottomBoardRotated);
-      gameBoard = generateNumber(
-        bottomRotateBoard(
-          bottomRotateBoard(bottomRotateBoard(slideBottomBoardRotated))
-        ),
-        1
+      newBoard = bottomRotateBoard(
+        bottomRotateBoard(bottomRotateBoard(slideBottomBoardRotated))
       );
       break;
   }
-  draw();
+  return newBoard;
+}
+
+function validateMove(newBoard, oldBoard) {
+  for (let i = 0; i < 4; i++) {
+    for (let j = 0; j < 4; j++) {
+      if (newBoard[i][j] != oldBoard[i][j]) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function copyBoard(board) {
+  let copy = [];
+  for (let i = 0; i < 4; i++) {
+    copy.push(board[i].slice());
+  }
+  return copy;
+}
+
+function gameOver(keyMoves, gameBoard) {
+  let originalBoard = copyBoard(gameBoard);
+  let falseCount = 0;
+
+  for (let i of keyMoves) {
+    let newBoard = slideBoard(i, originalBoard);
+    let valid = validateMove(newBoard, originalBoard);
+    console.log("Original: " + i);
+    printBoard(originalBoard);
+    console.log("New: " + i);
+    printBoard(newBoard);
+    console.log("valid for: " + i + ", " + valid);
+    if (!valid) {
+      falseCount += 1;
+    }
+    originalBoard = copyBoard(gameBoard);
+  }
+  if (falseCount >= 4) {
+    console.log("Game Over!");
+  }
+}
+
+document.addEventListener("keydown", function(pressedKey) {
+  let validKeys = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
+  let key = pressedKey.code;
+  if (validKeys.includes(key)) {
+    let newBoard = slideBoard(key, gameBoard);
+    let valid = validateMove(newBoard, gameBoard);
+    if (valid) {
+      gameBoard = placeNewNumber(newBoard, 1);
+      draw(gameBoard);
+      gameOver(validKeys, gameBoard);
+    }
+  }
 });
 
 initialize(gameBoard);

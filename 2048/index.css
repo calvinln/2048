@@ -1,0 +1,30 @@
+#container {
+  background-color: #b8aea4;
+  border-radius: 6px;
+  border-spacing: 0.25em;
+  table-layout: fixed;
+  width: 500px;
+  height: 500px;
+  font-size: 45px;
+  margin: 0px auto;
+  font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 700;
+}
+
+/* 2 is EEE4DB
+4 is EDE0C9
+8 is F1B27D
+16 is F49668
+32 is F57E64 
+64 is F56144 */
+
+td {
+  background-color: #cdc1b5;
+  color: #857b72;
+  text-align: center;
+  border-radius: 3px;
+}
+
+tr {
+  height: 25%;
+}
