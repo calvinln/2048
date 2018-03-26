@@ -63,14 +63,6 @@ Object.prototype.isEmpty = function() {
   return true;
 };
 
-function directionMove(board) {
-  let dict = {};
-  for (let i = 0; i < 4; i++) {
-    for (let j = 0; j < 4; j++) {}
-  }
-  return dict;
-}
-
 // collect all empty indexes and randomly choose one to spawn new number
 function placeNewNumber(board, num) {
   let copy = copyBoard(board);
@@ -89,7 +81,12 @@ function placeNewNumber(board, num) {
     let index = getRandomInt(emptyIndexes.length);
     let emptySlot = emptyIndexes[index];
     emptyIndexes.splice(index, 1);
-    let twoOrFour = startVals[getRandomInt(6)];
+    let twoOrFour;
+    if (getRandomInt(10) < 9) {
+      twoOrFour = 2;
+    } else {
+      twoOrFour = 4;
+    }
     copy[emptySlot[0]][emptySlot[1]] = twoOrFour;
   }
   return copy;
@@ -240,11 +237,6 @@ function gameOver(keyMoves, gameBoard) {
   for (let i of keyMoves) {
     let newBoard = slideBoard(i, originalBoard);
     let valid = validateMove(newBoard, originalBoard);
-    console.log("Original: " + i);
-    printBoard(originalBoard);
-    console.log("New: " + i);
-    printBoard(newBoard);
-    console.log("valid for: " + i + ", " + valid);
     if (!valid) {
       falseCount += 1;
     }
