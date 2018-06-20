@@ -1,54 +1,5 @@
-let gameBoard = [
-  ["", "", "", ""],
-  ["", "", "", ""],
-  ["", "", "", ""],
-  ["", "", "", ""]
-];
-
-function draw(board) {
-  let rows = document.querySelectorAll("tr");
-  for (let i = 0; i < 4; i++) {
-    for (let k = 0; k < 4; k++) {
-      let value = board[i][k];
-      let cell = rows[i].cells[k];
-      cell.innerHTML = value;
-
-      if (value == 2) {
-        cell.style.backgroundColor = "#EEE4DB";
-      } else if (value == 4) {
-        cell.style.backgroundColor = "#EBDFC5";
-      } else if (value == 8) {
-        cell.style.backgroundColor = "#F0B37E";
-      } else if (value == 16) {
-        cell.style.backgroundColor = "#F49668";
-      } else if (value == 32) {
-        cell.style.backgroundColor = "#F57E64";
-      } else if (value == 64) {
-        cell.style.backgroundColor = "#F56144";
-      } else if (value == 128) {
-        cell.style.backgroundColor = "#F1CF75";
-      } else if (value == 256) {
-        cell.style.backgroundColor = "#EFCC68";
-      } else if (value == 512) {
-        cell.style.backgroundColor = "#EBCB5E";
-      } else if (value == 1024) {
-        cell.style.backgroundColor = "#EFC549";
-      } else if (value == 2048) {
-        cell.style.backgroundColor = "#EDC43A";
-      } else if (value == 4096) {
-        cell.style.backgroundColor = "#3D3936";
-        cell.style.color = "#FDFDF8";
-      } else {
-        cell.style.backgroundColor = "#CDC1B5";
-      }
-      if (value > 4) {
-        cell.style.color = "#FCFED3";
-      } else {
-        cell.style.color = "#857b72";
-      }
-    }
-  }
-}
+// let gameBoard = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+// let boxes = [];
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
@@ -63,89 +14,20 @@ Object.prototype.isEmpty = function() {
   return true;
 };
 
-// collect all empty indexes and randomly choose one to spawn new number
-function placeNewNumber(board, num) {
-  let copy = copyBoard(board);
-
-  let emptyIndexes = [];
-  for (let j = 0; j < 4; j++) {
-    for (k = 0; k < 4; k++) {
-      if (board[j][k] === "") {
-        emptyIndexes.push([j, k]);
-      }
-    }
-  }
-
-  let startVals = [2, 2, 2, 2, 2, 4];
-  for (let j = 0; j < num; j++) {
-    let index = getRandomInt(emptyIndexes.length);
-    let emptySlot = emptyIndexes[index];
-    emptyIndexes.splice(index, 1);
-    let twoOrFour;
-    if (getRandomInt(10) < 9) {
-      twoOrFour = 2;
-    } else {
-      twoOrFour = 4;
-    }
-    copy[emptySlot[0]][emptySlot[1]] = twoOrFour;
-  }
-  return copy;
+function getBoxPosition(row, col) {
+  const topPosition = 7.2 + 14.4 * row + 107 * row;
+  const leftPosition = 7.2 + 14.4 * col + 107 * col;
+  return [topPosition, leftPosition];
 }
 
-let bestScore = 0;
-let score = 0;
+// let bestScore = 0;
+// let score = 0;
 
-function scoreKeeper() {
-  if (score >= bestScore) {
-    bestScore = score;
-  }
-}
-
-function initialize(board) {
-  let count = 0;
-  gameBoard = placeNewNumber(board, 2);
-  draw(gameBoard);
-}
-
-function slideRowLeft(row) {
-  let arr = row.slice();
-  let currentIndex = 0;
-
-  for (let i = 1; i < 4; i++) {
-    if (arr[i] == 0) {
-      continue;
-    }
-
-    if (arr[currentIndex] == 0) {
-      arr[currentIndex] = arr[i];
-    } else if (arr[currentIndex] == arr[i]) {
-      arr[currentIndex] += arr[i];
-      score += arr[currentIndex];
-      scoreKeeper();
-      currentIndex += 1;
-    } else if (arr[currentIndex] != arr[i] && arr[i - 1] == 0) {
-      if (arr[currentIndex + 1] == 0) {
-        arr[currentIndex + 1] = arr[i];
-      } else {
-        arr[i - 1] = arr[i];
-      }
-      currentIndex += 1;
-    } else {
-      currentIndex += 1;
-      continue;
-    }
-    arr[i] = "";
-  }
-  return arr;
-}
-
-function slideBoardLeft(board) {
-  let result = [];
-  for (let i = 0; i < 4; i++) {
-    result.push(slideRowLeft(board[i]));
-  }
-  return result;
-}
+// function scoreKeeper() {
+//   if (score >= bestScore) {
+//     bestScore = score;
+//   }
+// }
 
 function printBoard(board) {
   for (let i = 0; i < 4; i++) {
@@ -184,33 +66,6 @@ function bottomRotateBoard(board) {
   return result;
 }
 
-function slideBoard(key, board) {
-  let newBoard;
-  switch (key) {
-    case "ArrowLeft":
-      newBoard = slideBoardLeft(board, 1);
-      break;
-    case "ArrowRight":
-      let boardReversed = reverseBoard(board);
-      let slideBoardReversed = slideBoardLeft(boardReversed);
-      newBoard = reverseBoard(slideBoardReversed);
-      break;
-    case "ArrowUp":
-      let upBoardRotated = upRotateBoard(board);
-      let slideUpBoardRotated = slideBoardLeft(upBoardRotated);
-      newBoard = upRotateBoard(slideUpBoardRotated);
-      break;
-    case "ArrowDown":
-      let bottomBoardRotated = bottomRotateBoard(board);
-      let slideBottomBoardRotated = slideBoardLeft(bottomBoardRotated);
-      newBoard = bottomRotateBoard(
-        bottomRotateBoard(bottomRotateBoard(slideBottomBoardRotated))
-      );
-      break;
-  }
-  return newBoard;
-}
-
 function validateMove(newBoard, oldBoard) {
   for (let i = 0; i < 4; i++) {
     for (let j = 0; j < 4; j++) {
@@ -247,18 +102,538 @@ function gameOver(keyMoves, gameBoard) {
   }
 }
 
+////////////////////// controller.js
+
+// function evemtHandler(event) {
+//   if (event.name == 'new') {
+//     insert a div into the dom and perfom animation
+//   }
+// }
+
+// model.initialize(eventhandler);
+
+// // model.js
+
+// var eventHandler;
+
+// function initialize(handler) {
+//   eventHandler = handler;
+
+//   // do some logic
+
+//   eventHandler
+// }
+
+// --------------------------------------------------------------
+// model has interface that determines what the controller can do with it.
+// lets controller call initialize and pass an eventhandler
+// has a getboard funtion so that controller can get the board at any time
+// has a slide function that the controller passes a direction in which the model defines. .
+// model has its own string for "up" even though the controller gets a key from the browser that is gonna be "ArrowUp". Need to map it to "Up" because the model decides what it should be
+// model will use the eventhandler, that takes 1 argument, passed in from controller and pass an event of what happened
+// controller will then react to what event it is, either add or move
+// controller can tell if a merge happened because it can check the values of the board either by looking at the browser's div and getting the value or storing a copy of the old board in the controller and comparing it with the new board from model
+// important to use the MVC way because it is a separation of concerns and if we ever switch out a part, it will still work because they are independent of each other. The controller can have direct access to the M and V but the M and V only have callbacks to controller
+
+// --------------------------------------------------------------
+// MODEL
+
+// look into window onload
+let addHandler;
+let mergeHandler;
+let moveHandler;
+let boxes = [];
+let gameBoard = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+
+function initialize(add, move, merge) {
+  addHandler = add;
+  moveHandler = move;
+  mergeHandler = merge;
+  gameBoard = placeNewNumber(gameBoard, 2);
+  // console.log(boxes);
+  // console.log(gameBoard);
+}
+
+function getBoard() {
+  return gameBoard;
+}
+
+function slideBoardLeft(board) {
+  let resultBoard = [];
+  let movePositionBoard = [];
+  for (let i = 0; i < 4; i++) {
+    const rowAndStates = slideRowLeft(board[i], i);
+    const numOfTransitions = rowAndStates[1].length;
+    resultBoard.push(rowAndStates[0]);
+    for (let j = 0; j < numOfTransitions; j++) {
+      movePositionBoard.push(rowAndStates[1][j]);
+    }
+  }
+  return [resultBoard, movePositionBoard];
+}
+
+function slideRowLeft(row, rowNumber) {
+  let copyOfRow = row.slice();
+  let currentIndex = 0;
+  let states = [];
+  // return an array of objects that has what position it was from and moved to. Then it will
+  // make a board of transitions and we can rotate that board like we rotate gameBoard
+  // to accomodate for the different directions
+
+  for (let i = 1; i < 4; i++) {
+    if (copyOfRow[i] === 0) {
+      continue;
+    }
+
+    let boxState = {};
+
+    // if currentIndex is 0, swap it with the next index value
+    if (copyOfRow[currentIndex] === 0) {
+      // moveHandler();
+      let value = copyOfRow[i];
+      copyOfRow[currentIndex] = value;
+      boxState.name = "move";
+      boxState.startCol = i;
+      boxState.startRow = rowNumber;
+      boxState.finalCol = currentIndex;
+      boxState.finalRow = rowNumber;
+      boxState.val = value;
+
+      states.push(boxState);
+    }
+    // currentIndex value is the same as i, merge into one
+    else if (copyOfRow[currentIndex] === copyOfRow[i]) {
+      copyOfRow[currentIndex] += copyOfRow[i];
+      // mergeHandler()
+      boxState.name = "merge";
+      boxState.startCol = i;
+      boxState.startRow = rowNumber;
+      boxState.finalCol = currentIndex;
+      boxState.finalRow = rowNumber;
+      boxState.val = copyOfRow[currentIndex];
+
+      states.push(boxState);
+      currentIndex += 1;
+    }
+    // currentIndex is not same value as i AND value before i is 0
+    else if (
+      copyOfRow[currentIndex] !== copyOfRow[i] &&
+      copyOfRow[i - 1] === 0
+    ) {
+      // if currentIndex + 1 is 0, we move i there. ex [2, 0, 0, 4]
+      if (copyOfRow[currentIndex + 1] === 0) {
+        copyOfRow[currentIndex + 1] = copyOfRow[i];
+        boxState.name = "move";
+        boxState.startCol = i;
+        boxState.startRow = rowNumber;
+        boxState.finalCol = currentIndex + 1;
+        boxState.finalRow = rowNumber;
+        boxState.val = copyOfRow[currentIndex + 1];
+
+        // -------------------------
+        currentIndex += 1;
+        // -------------------------
+
+        states.push(boxState);
+      } else {
+        // moving i to i - 1, there isn't consecutive zeroes, just 1 zero before it
+        copyOfRow[i - 1] = copyOfRow[i];
+        boxState.name = "move";
+        boxState.startCol = i;
+        boxState.startRow = rowNumber;
+        boxState.finalCol = i - 1;
+        boxState.finalRow = rowNumber;
+        boxState.val = copyOfRow[i - 1];
+
+        //-------------------------
+        // currentIndex += 1;
+        //-------------------------
+        states.push(boxState);
+      }
+    } else {
+      currentIndex += 1;
+      continue;
+    }
+    copyOfRow[i] = 0;
+  }
+  return [copyOfRow, states];
+}
+
+function slide(direction, board) {
+  let transitions;
+  switch (direction) {
+    case "Up":
+      const upBoard = upRotateBoard(board);
+      const slideUpBoard = slideBoardLeft(upBoard);
+      gameBoard = upRotateBoard(slideUpBoard[0]);
+
+      if (!validateMove(board, gameBoard)) {
+        return 0;
+      }
+
+      transitions = slideUpBoard[1];
+
+      for (let i = 0; i < transitions.length; i++) {
+        let aTransition = transitions[i];
+        const initialRowStart = aTransition.startCol;
+        const initialColStart = aTransition.startRow;
+        const newFinalRow = aTransition.finalCol;
+        const newFinalCol = aTransition.finalRow;
+        aTransition.startRow = initialRowStart;
+        aTransition.startCol = initialColStart;
+        aTransition.finalRow = newFinalRow;
+        aTransition.finalCol = newFinalCol;
+      }
+
+      doTransitions(transitions);
+      break;
+    case "Down":
+      let bottomBoard = bottomRotateBoard(board);
+      let slideBottomBoard = slideBoardLeft(bottomBoard);
+      transitions = slideBottomBoard[1];
+      gameBoard = bottomRotateBoard(
+        bottomRotateBoard(bottomRotateBoard(slideBottomBoard[0]))
+      );
+
+      if (!validateMove(board, gameBoard)) {
+        return 0;
+      }
+
+      for (let i = 0; i < transitions.length; i++) {
+        let initialRowStart;
+        let aTransition = transitions[i];
+        const tempStartCol = aTransition.startCol;
+        const finalCol = aTransition.startRow;
+        const initialColStart = aTransition.finalRow;
+        if (tempStartCol === 0) {
+          initialRowStart = 3;
+        } else if (tempStartCol === 1) {
+          initialRowStart = 2;
+        } else if (tempStartCol === 2) {
+          initialRowStart = 1;
+        } else {
+          initialRowStart = 0;
+        }
+        let tempFinalCol = aTransition.finalCol;
+        let newFinalRow;
+        if (tempFinalCol === 0) {
+          newFinalRow = 3;
+        } else if (tempFinalCol === 1) {
+          newFinalRow = 2;
+        } else if (tempFinalCol === 2) {
+          newFinalRow = 1;
+        } else {
+          newFinalRow = 0;
+        }
+        aTransition.finalCol = finalCol;
+        aTransition.startCol = initialColStart;
+        aTransition.startRow = initialRowStart;
+        aTransition.finalRow = newFinalRow;
+      }
+      doTransitions(transitions);
+      break;
+    case "Left":
+      const boardAndState = slideBoardLeft(board);
+      gameBoard = boardAndState[0];
+
+      if (!validateMove(board, gameBoard)) {
+        return 0;
+      }
+
+      transitions = boardAndState[1];
+
+      doTransitions(transitions);
+      break;
+    case "Right":
+      // slide right only needs to worry about the change in col
+      let boardReversed = reverseBoard(board);
+      let slideReversedBoard = slideBoardLeft(boardReversed);
+      gameBoard = reverseBoard(slideReversedBoard[0]);
+
+      if (!validateMove(board, gameBoard)) {
+        return 0;
+      }
+
+      transitions = slideReversedBoard[1];
+
+      for (let i = 0; i < transitions.length; i++) {
+        let aTransition = transitions[i];
+        let initialColStart;
+
+        const alteredStartCol = aTransition.startCol;
+        if (alteredStartCol === 1) {
+          initialColStart = 2;
+        } else if (alteredStartCol === 2) {
+          initialColStart = 1;
+        } else if (alteredStartCol === 0) {
+          initialColStart = 3;
+        } else {
+          initialColStart = 0;
+        }
+
+        aTransition.startCol = initialColStart;
+
+        let newFinalCol;
+        const alteredFinalCol = aTransition.finalCol;
+
+        if (alteredFinalCol === 0) {
+          newFinalCol = 3;
+        } else if (alteredFinalCol === 1) {
+          newFinalCol = 2;
+        } else if (alteredFinalCol === 2) {
+          newFinalCol = 1;
+        } else {
+          newFinalCol = 0;
+        }
+        aTransition.finalCol = newFinalCol;
+      }
+      doTransitions(transitions);
+      break;
+  }
+  board = getBoard();
+  gameBoard = placeNewNumber(board, 1);
+}
+
+function findBox(row, col, boxes) {
+  const boxesLength = boxes.length;
+  for (let k = 0; k < boxesLength; k++) {
+    const aBox = boxes[k];
+    if (aBox.rowBoxPosition === row && aBox.colBoxPosition === col) {
+      return aBox;
+    }
+  }
+}
+
+function printBoxes(boxes) {
+  for (let i = 0; i < boxes.length; i++) {
+    console.log(boxes[i]);
+  }
+}
+
+function deleteBox(row, col, boxes) {
+  const boxesLength = boxes.length;
+  for (let k = 0; k < boxesLength; k++) {
+    const aBox = boxes[k];
+    if (aBox.rowBoxPosition === row && aBox.colBoxPosition === col) {
+      boxes.splice(k, 1);
+      return;
+    }
+  }
+}
+
+function doTransitions(transitionArray) {
+  const numOfTransitions = transitionArray.length;
+
+  for (let i = 0; i < numOfTransitions; i++) {
+    const boxTransition = transitionArray[i];
+    const boxName = boxTransition.name;
+    if (boxName === "move") {
+      moveHandler(boxTransition);
+    } else if (boxName === "merge") {
+      mergeHandler(boxTransition);
+    }
+  }
+}
+
+function placeNewNumber(board, num) {
+  let copy = copyBoard(board);
+
+  let emptyIndexes = [];
+  for (let j = 0; j < 4; j++) {
+    for (k = 0; k < 4; k++) {
+      // changed from "" to 0
+      if (board[j][k] === 0) {
+        emptyIndexes.push([j, k]);
+      }
+    }
+  }
+
+  let startVals = [2, 2, 2, 2, 2, 4];
+  for (let j = 0; j < num; j++) {
+    let index = getRandomInt(emptyIndexes.length);
+    let emptySlot = emptyIndexes[index];
+    emptyIndexes.splice(index, 1);
+    let twoOrFour;
+    if (getRandomInt(10) < 9) {
+      twoOrFour = 2;
+    } else {
+      twoOrFour = 4;
+    }
+    const row = emptySlot[0];
+    const col = emptySlot[1];
+    copy[row][col] = twoOrFour;
+
+    addHandler(row, col, twoOrFour, false);
+  }
+  return copy;
+}
+
+// --------------------------------------------------------------
+// CONTROLLER - no dom or css above this line
+
+function addColor(val, box) {
+  switch (val) {
+    case 2:
+      box.classList.add("two");
+      break;
+    case 4:
+      box.classList.add("four");
+      break;
+    case 8:
+      box.classList.add("eight");
+      break;
+    case 16:
+      box.classList.add("one-six");
+      break;
+    case 32:
+      box.classList.add("three-two");
+      break;
+    case 64:
+      box.classList.add("six-four");
+      break;
+    case 128:
+      box.classList.add("one-two-eight");
+      break;
+    case 256:
+      box.classList.add("two-five-six");
+      break;
+    case 512:
+      box.classList.add("five-one-two");
+      break;
+    case 1024:
+      box.classList.add("one-zero-two-four");
+      break;
+    case 2048:
+      // has a gold glow around the box
+      // glow color = #E7C677
+      box.classList.add("two-zero-four-eight");
+      break;
+    case 4096:
+      box.classList.add("four-zero-nine-six");
+      break;
+  }
+}
+
+function controllerAdd(row, col, val, toMerge) {
+  let box = {};
+  box.rowBoxPosition = row;
+  box.colBoxPosition = col;
+  box.val = val;
+  // box.id = "row" + row + "col" + col;
+  let domBox = document.createElement("div");
+  box.theDiv = domBox;
+  const boxPos = getBoxPosition(row, col);
+  domBox.classList.add("overlay-box");
+
+  addColor(val, domBox);
+
+  if (toMerge) {
+    domBox.classList.add("merge-effect");
+  } else {
+    domBox.classList.add("bounce-effect");
+  }
+  domBox.addEventListener("transitionend", function(event) {
+    domBox.classList.remove("bounce-effect");
+  });
+  domBox.style.top = boxPos[0] + "px";
+  domBox.style.left = boxPos[1] + "px";
+  domBox.innerHTML = val;
+  // domBox.setAttribute("id", box.id);
+  boxes.push(box);
+  let container = document.getElementsByClassName("overlay-container")[0];
+
+  container.appendChild(domBox);
+}
+
+// when boxes move, have to change id
+function controllerMove(transitionBox) {
+  const startRow = transitionBox.startRow;
+  const startCol = transitionBox.startCol;
+  const finalRow = transitionBox.finalRow;
+  const finalCol = transitionBox.finalCol;
+  // console.log("startRow: " + startRow);
+  // console.log("finalRow: " + finalRow);
+  // console.log("startCol: " + startCol);
+  // console.log("finalCol: " + finalCol);
+  const startBox = findBox(startRow, startCol, boxes);
+  const finalBoxPos = getBoxPosition(finalRow, finalCol);
+  // console.log(startBox);
+  // console.log(boxes);
+  //
+  startBox.theDiv.style.top = finalBoxPos[0] + "px";
+  startBox.theDiv.style.left = finalBoxPos[1] + "px";
+  startBox.colBoxPosition = finalCol;
+  startBox.rowBoxPosition = finalRow;
+  // startBox.id = "row" + row + "col" + finalCol;
+  // startBox.theDiv.setAttribute("id", startBox.id);
+}
+
+function controllerMerge(transitionBox) {
+  const startRow = transitionBox.startRow;
+  const startCol = transitionBox.startCol;
+  const finalRow = transitionBox.finalRow;
+  const finalCol = transitionBox.finalCol;
+  const startBox = findBox(startRow, startCol, boxes);
+  const finalBox = findBox(finalRow, finalCol, boxes);
+  const finalVal = startBox.val + finalBox.val;
+  const boxPos = getBoxPosition(finalRow, finalCol);
+
+  // have to change the id of the boxes to be deleted. when transition ends, the call back will remove
+  // the element with the start and final box id, but at that time, there could be a new box that
+  // moved and had its' id changed to the one we are trying to remove. therefore, removing the wrong
+  // box(s)
+  // look into remove by reference of the start and final box, don't need setattribute id strings at all
+
+  // startBox.id = startBox.id + "delete";
+  // finalBox.id = finalBox.id + "delete";
+  // finalBox.theDiv.setAttribute("id", finalBox.id);
+  // startBox.theDiv.setAttribute("id", startBox.id);
+  // let startBoxListener = document.getElementById(startBox.id);
+  // deleteBox(row, startCol, boxes);
+  // deleteBox(row, finalCol, boxes);
+  // startBoxListener.addEventListener("transitionend", function(event) {
+  //   document.getElementById(startBox.id).remove();
+  //   document.getElementById(finalBox.id).remove();
+  //   addHandler(row, finalCol, finalVal);
+  // });
+
+  const startBoxDiv = startBox.theDiv;
+  const finalBoxDiv = finalBox.theDiv;
+  deleteBox(startRow, startCol, boxes);
+  deleteBox(finalRow, finalCol, boxes);
+  startBoxDiv.addEventListener("transitionend", function(event) {
+    // remove both boxes to create the new box
+    // can send extra arguement to addHandler to say that its a merge and not add bounce class
+    startBoxDiv.remove();
+    finalBoxDiv.remove();
+    addHandler(finalRow, finalCol, finalVal, true);
+  });
+  // box move transition
+  startBox.theDiv.style.top = boxPos[0] + "px";
+  startBox.theDiv.style.left = boxPos[1] + "px";
+}
+
 document.addEventListener("keydown", function(pressedKey) {
+  // map arrowup to up for model
   let validKeys = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
   let key = pressedKey.code;
+  let board = getBoard();
   if (validKeys.includes(key)) {
-    let newBoard = slideBoard(key, gameBoard);
-    let valid = validateMove(newBoard, gameBoard);
-    if (valid) {
-      gameBoard = placeNewNumber(newBoard, 1);
-      draw(gameBoard);
-      gameOver(validKeys, gameBoard);
+    switch (key) {
+      case "ArrowUp":
+        slide("Up", board);
+        break;
+      case "ArrowDown":
+        slide("Down", board);
+        break;
+      case "ArrowLeft":
+        slide("Left", board);
+        break;
+      case "ArrowRight":
+        slide("Right", board);
+        break;
     }
   }
 });
 
-initialize(gameBoard);
+initialize(controllerAdd, controllerMove, controllerMerge);
