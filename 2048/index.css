@@ -82,6 +82,7 @@ p {
 a {
   text-decoration: underline;
   color: #776e65;
+  font-weight: bold;
 }
 
 .bottom-paragraph {
