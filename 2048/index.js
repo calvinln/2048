@@ -20,15 +20,6 @@ function getBoxPosition(row, col) {
   return [topPosition, leftPosition];
 }
 
-// let bestScore = 0;
-// let score = 0;
-
-// function scoreKeeper() {
-//   if (score >= bestScore) {
-//     bestScore = score;
-//   }
-// }
-
 function printBoard(board) {
   for (let i = 0; i < 4; i++) {
     console.log(board[i]);
@@ -150,8 +141,6 @@ function initialize(add, move, merge) {
   moveHandler = move;
   mergeHandler = merge;
   gameBoard = placeNewNumber(gameBoard, 2);
-  // console.log(boxes);
-  // console.log(gameBoard);
 }
 
 function getBoard() {
@@ -468,6 +457,25 @@ function placeNewNumber(board, num) {
   return copy;
 }
 
+let bestScore = 0;
+let score = 0;
+
+function scoreKeeper(val) {
+  score += val;
+  if (score >= bestScore) {
+    bestScore = score;
+  }
+  return [score, bestScore];
+}
+
+function newGame() {
+  score = 0;
+  boxes = [];
+  gameBoard = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+  gameBoard = placeNewNumber(gameBoard, 2);
+  // have to clear dom children for visual box
+}
+
 // --------------------------------------------------------------
 // CONTROLLER - no dom or css above this line
 
@@ -576,6 +584,17 @@ function controllerMerge(transitionBox) {
   const startBox = findBox(startRow, startCol, boxes);
   const finalBox = findBox(finalRow, finalCol, boxes);
   const finalVal = startBox.val + finalBox.val;
+
+  // add finalVal to score
+  const scores = scoreKeeper(finalVal);
+  let bestScoreElement = document.getElementsByClassName("best-score")[0];
+  let currentScoreElement = document.getElementsByClassName("current-score")[0];
+  const newCurrentScore = scores[0];
+  const newBestScore = scores[1];
+
+  bestScoreElement.innerHTML = newBestScore;
+  currentScoreElement.innerHTML = newCurrentScore;
+
   const boxPos = getBoxPosition(finalRow, finalCol);
 
   // have to change the id of the boxes to be deleted. when transition ends, the call back will remove
@@ -612,6 +631,22 @@ function controllerMerge(transitionBox) {
   startBox.theDiv.style.top = boxPos[0] + "px";
   startBox.theDiv.style.left = boxPos[1] + "px";
 }
+
+const newGameButton = document.getElementsByClassName("new-game-btn")[0];
+
+newGameButton.addEventListener("click", function() {
+  const overlayContainer = document.getElementsByClassName(
+    "overlay-container"
+  )[0];
+  while (overlayContainer.lastChild) {
+    overlayContainer.removeChild(overlayContainer.lastChild);
+  }
+
+  let currentScoreElement = document.getElementsByClassName("current-score")[0];
+  currentScoreElement.innerHTML = 0;
+
+  newGame();
+});
 
 document.addEventListener("keydown", function(pressedKey) {
   // map arrowup to up for model

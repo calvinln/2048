@@ -2,38 +2,94 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>2048</title>
-    <link rel="stylesheet" href="index.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>2048</title>
+  <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
-    <div class="board">
-        <div class="background-container">
-            <div class="background-square"></div>
-            <div class="background-square"></div>
-            <div class="background-square"></div>
-            <div class="background-square"></div>
-            <div class="background-square"></div>
-            <div class="background-square"></div>
-            <div class="background-square"></div>
-            <div class="background-square"></div>
-            <div class="background-square"></div>
-            <div class="background-square"></div>
-            <div class="background-square"></div>
-            <div class="background-square"></div>
-            <div class="background-square"></div>
-            <div class="background-square"></div>
-            <div class="background-square"></div>
-            <div class="background-square"></div>
-        </div>
-        <div class="overlay-container">
-        </div>
+  <div class="head-paragraph">
+    <div class="game-title">2048</div>
+    <div class="score-background left-score-rectangle">
+      <p class="label">SCORE</p>
+      <p class="current-score">0</p>
+    </div>
+    <div class="score-background right-score-rectangle">
+      <p class="label">BEST</p>
+      <p class="best-score">0</p>
+    </div>
+    <div class="game-goal">Join the numbers and get to the
+      <strong>2048 tile!</strong>
+    </div>
+    <div class="new-game-btn">
+      <p>New Game</p>
+    </div>
+  </div>
+  <div class="board">
+    <div class="background-container">
+      <div class="background-square"></div>
+      <div class="background-square"></div>
+      <div class="background-square"></div>
+      <div class="background-square"></div>
+      <div class="background-square"></div>
+      <div class="background-square"></div>
+      <div class="background-square"></div>
+      <div class="background-square"></div>
+      <div class="background-square"></div>
+      <div class="background-square"></div>
+      <div class="background-square"></div>
+      <div class="background-square"></div>
+      <div class="background-square"></div>
+      <div class="background-square"></div>
+      <div class="background-square"></div>
+      <div class="background-square"></div>
+    </div>
+    <div class="overlay-container">
+    </div>
+  </div>
+  <div class="bottom-paragraph">
+    <div class="directions">
+      <strong>HOW TO PLAY:</strong> Use your
+      <strong>arrow keys</strong> to move the tiles. When two tiles with the same number touch, they
+      <strong>merge into one!</strong>
     </div>
 
-    <script type="text/javascript" src="index.js"></script>
+    <hr class="first-horizontal-rule">
+
+    <div class="disclaimer-note">
+      <strong>NOTE:</strong> The game on
+      <strong class="underline">this site</strong> is a replica of 2048.
+    </div>
+
+    <hr class="second-horizontal-rule">
+
+    <div class="signature">
+      Created by
+      <span>
+        <a href="https://www.calvinln.com/">
+          Calvin Nguyen.
+        </a>
+      </span>
+
+      <span> Based on</span>
+
+      <a href="https://itunes.apple.com/us/app/1024!/id823499224" class="underline">
+        <strong>1024 by Veewo Studio</strong>
+      </a>
+
+      and conceptually similar to
+
+      <a href="http://asherv.com/threes/" class="underline">
+        <strong>Threes by Asher Vollmer.</strong>
+      </a>
+
+    </div>
+  </div>
+
+
+  <script type="text/javascript" src="index.js"></script>
 </body>
 
 </html>
