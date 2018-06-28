@@ -79,6 +79,10 @@ p {
   margin: 0 auto;
 }
 
+.bold {
+  font-weight: bold;
+}
+
 a {
   text-decoration: underline;
   color: #776e65;
