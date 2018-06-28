@@ -1,6 +1,6 @@
 # 2048
 
-## Deploy
+### Deploy
 
 ```
 firebase deploy
