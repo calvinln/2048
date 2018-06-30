@@ -671,4 +671,14 @@ document.addEventListener("keydown", function(pressedKey) {
   }
 });
 
+window.addEventListener(
+  "keydown",
+  function(event) {
+    if ([37, 38, 39, 40].indexOf(event.keyCode) > -1) {
+      event.preventDefault();
+    }
+  },
+  false
+);
+
 initialize(controllerAdd, controllerMove, controllerMerge);
