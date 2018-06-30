@@ -14,12 +14,6 @@ Object.prototype.isEmpty = function() {
   return true;
 };
 
-function getBoxPosition(row, col) {
-  const topPosition = 7.2 + 14.4 * row + 107 * row;
-  const leftPosition = 7.2 + 14.4 * col + 107 * col;
-  return [topPosition, leftPosition];
-}
-
 function printBoard(board) {
   for (let i = 0; i < 4; i++) {
     console.log(board[i]);
@@ -479,6 +473,15 @@ function newGame() {
 // --------------------------------------------------------------
 // CONTROLLER - no dom or css above this line
 
+function getBoxPosition(row, col, boardWidth) {
+  const boxSize = (boardWidth * 107) / 500;
+  const space = (boardWidth - 4 * boxSize) / 5;
+  const anchorOffset = space / 2;
+  const topPosition = anchorOffset + space * row + boxSize * row;
+  const leftPosition = anchorOffset + space * col + boxSize * col;
+  return [topPosition, leftPosition];
+}
+
 function addColor(val, box) {
   switch (val) {
     case 2:
@@ -530,7 +533,8 @@ function controllerAdd(row, col, val, toMerge) {
   // box.id = "row" + row + "col" + col;
   let domBox = document.createElement("div");
   box.theDiv = domBox;
-  const boxPos = getBoxPosition(row, col);
+  const boardWidth = document.getElementsByClassName("board")[0].clientWidth;
+  const boxPos = getBoxPosition(row, col, boardWidth);
   domBox.classList.add("overlay-box");
 
   addColor(val, domBox);
@@ -564,7 +568,8 @@ function controllerMove(transitionBox) {
   // console.log("startCol: " + startCol);
   // console.log("finalCol: " + finalCol);
   const startBox = findBox(startRow, startCol, boxes);
-  const finalBoxPos = getBoxPosition(finalRow, finalCol);
+  const boardWidth = document.getElementsByClassName("board")[0].clientWidth;
+  const finalBoxPos = getBoxPosition(finalRow, finalCol, boardWidth);
   // console.log(startBox);
   // console.log(boxes);
   //
@@ -572,6 +577,7 @@ function controllerMove(transitionBox) {
   startBox.theDiv.style.left = finalBoxPos[1] + "px";
   startBox.colBoxPosition = finalCol;
   startBox.rowBoxPosition = finalRow;
+
   // startBox.id = "row" + row + "col" + finalCol;
   // startBox.theDiv.setAttribute("id", startBox.id);
 }
@@ -595,7 +601,8 @@ function controllerMerge(transitionBox) {
   bestScoreElement.innerHTML = newBestScore;
   currentScoreElement.innerHTML = newCurrentScore;
 
-  const boxPos = getBoxPosition(finalRow, finalCol);
+  const boardWidth = document.getElementsByClassName("board")[0].clientWidth;
+  const boxPos = getBoxPosition(finalRow, finalCol, boardWidth);
 
   // have to change the id of the boxes to be deleted. when transition ends, the call back will remove
   // the element with the start and final box id, but at that time, there could be a new box that
@@ -653,7 +660,9 @@ document.addEventListener("keydown", function(pressedKey) {
   let validKeys = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
   let key = pressedKey.code;
   let board = getBoard();
+
   if (validKeys.includes(key)) {
+    pressedKey.preventDefault();
     switch (key) {
       case "ArrowUp":
         slide("Up", board);
@@ -670,15 +679,5 @@ document.addEventListener("keydown", function(pressedKey) {
     }
   }
 });
-
-window.addEventListener(
-  "keydown",
-  function(event) {
-    if ([37, 38, 39, 40].indexOf(event.keyCode) > -1) {
-      event.preventDefault();
-    }
-  },
-  false
-);
 
 initialize(controllerAdd, controllerMove, controllerMerge);
