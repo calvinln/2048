@@ -32,6 +32,7 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-          
+      
+      - run: ./node_modules/.bin/parcel build index.html
       - run: ./node_modules/.bin/firebase deploy --token=1/EAPRZZdmMuberdKGIt-ueS1oW2ke3znxfDXU1QwCS1Q
 

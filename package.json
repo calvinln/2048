@@ -4,7 +4,9 @@
   "description": "A replica of the 2048 game.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel index.html",
+    "deploy": "parcel build index.html && firebase deploy"
   },
   "repository": {
     "type": "git",
@@ -17,6 +19,7 @@
   },
   "homepage": "https://github.com/calvinln/2048#readme",
   "devDependencies": {
-    "firebase-tools": "^3.19.1"
+    "firebase-tools": "^3.19.1",
+    "parcel-bundler": "^1.9.3"
   }
 }
