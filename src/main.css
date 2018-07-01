@@ -230,7 +230,7 @@ a {
   font-size: 0;
   padding: 7.2px;
   box-sizing: border-box;
-  position: relative;
+  position: absolute;
 }
 
 .overlay-box {
