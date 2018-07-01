@@ -472,6 +472,7 @@ function newGame() {
 
 // --------------------------------------------------------------
 // CONTROLLER - no dom or css above this line
+let transitionsInProgress = 0;
 
 function getBoxPosition(row, col, boardWidth) {
   const boxSize = (boardWidth * 107) / 500;
@@ -544,9 +545,6 @@ function controllerAdd(row, col, val, toMerge) {
   } else {
     domBox.classList.add("bounce-effect");
   }
-  domBox.addEventListener("transitionend", function(event) {
-    domBox.classList.remove("bounce-effect");
-  });
   domBox.style.top = boxPos[0] + "px";
   domBox.style.left = boxPos[1] + "px";
   domBox.innerHTML = val;
@@ -577,7 +575,13 @@ function controllerMove(transitionBox) {
   startBox.theDiv.style.left = finalBoxPos[1] + "px";
   startBox.colBoxPosition = finalCol;
   startBox.rowBoxPosition = finalRow;
+  transitionsInProgress += 1;
 
+  const listener = function(event) {
+    transitionsInProgress -= 1;
+    startBox.theDiv.removeEventListener("transitionend", listener);
+  };
+  startBox.theDiv.addEventListener("transitionend", listener);
   // startBox.id = "row" + row + "col" + finalCol;
   // startBox.theDiv.setAttribute("id", startBox.id);
 }
@@ -633,10 +637,12 @@ function controllerMerge(transitionBox) {
     startBoxDiv.remove();
     finalBoxDiv.remove();
     addHandler(finalRow, finalCol, finalVal, true);
+    transitionsInProgress -= 1;
   });
   // box move transition
   startBox.theDiv.style.top = boxPos[0] + "px";
   startBox.theDiv.style.left = boxPos[1] + "px";
+  transitionsInProgress += 1;
 }
 
 const newGameButton = document.getElementsByClassName("new-game-btn")[0];
@@ -663,6 +669,11 @@ document.addEventListener("keydown", function(pressedKey) {
 
   if (validKeys.includes(key)) {
     pressedKey.preventDefault();
+
+    if (transitionsInProgress !== 0) {
+      return;
+    }
+
     switch (key) {
       case "ArrowUp":
         slide("Up", board);
