@@ -1,5 +1,8 @@
 // let gameBoard = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
 // let boxes = [];
+import * as app from './app';
+
+app.run();
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
