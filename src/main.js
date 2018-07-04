@@ -83,7 +83,7 @@ function gameOver(keyMoves, gameBoard) {
     originalBoard = copyBoard(gameBoard);
   }
   if (falseCount >= 4) {
-    console.log("Game Over!");
+    console.log('Game Over!');
   }
 }
 
@@ -175,7 +175,7 @@ function slideRowLeft(row, rowNumber) {
       // moveHandler();
       let value = copyOfRow[i];
       copyOfRow[currentIndex] = value;
-      boxState.name = "move";
+      boxState.name = 'move';
       boxState.startCol = i;
       boxState.startRow = rowNumber;
       boxState.finalCol = currentIndex;
@@ -188,7 +188,7 @@ function slideRowLeft(row, rowNumber) {
     else if (copyOfRow[currentIndex] === copyOfRow[i]) {
       copyOfRow[currentIndex] += copyOfRow[i];
       // mergeHandler()
-      boxState.name = "merge";
+      boxState.name = 'merge';
       boxState.startCol = i;
       boxState.startRow = rowNumber;
       boxState.finalCol = currentIndex;
@@ -206,7 +206,7 @@ function slideRowLeft(row, rowNumber) {
       // if currentIndex + 1 is 0, we move i there. ex [2, 0, 0, 4]
       if (copyOfRow[currentIndex + 1] === 0) {
         copyOfRow[currentIndex + 1] = copyOfRow[i];
-        boxState.name = "move";
+        boxState.name = 'move';
         boxState.startCol = i;
         boxState.startRow = rowNumber;
         boxState.finalCol = currentIndex + 1;
@@ -221,7 +221,7 @@ function slideRowLeft(row, rowNumber) {
       } else {
         // moving i to i - 1, there isn't consecutive zeroes, just 1 zero before it
         copyOfRow[i - 1] = copyOfRow[i];
-        boxState.name = "move";
+        boxState.name = 'move';
         boxState.startCol = i;
         boxState.startRow = rowNumber;
         boxState.finalCol = i - 1;
@@ -245,7 +245,7 @@ function slideRowLeft(row, rowNumber) {
 function slide(direction, board) {
   let transitions;
   switch (direction) {
-    case "Up":
+    case 'Up':
       const upBoard = upRotateBoard(board);
       const slideUpBoard = slideBoardLeft(upBoard);
       gameBoard = upRotateBoard(slideUpBoard[0]);
@@ -270,7 +270,7 @@ function slide(direction, board) {
 
       doTransitions(transitions);
       break;
-    case "Down":
+    case 'Down':
       let bottomBoard = bottomRotateBoard(board);
       let slideBottomBoard = slideBoardLeft(bottomBoard);
       transitions = slideBottomBoard[1];
@@ -315,7 +315,7 @@ function slide(direction, board) {
       }
       doTransitions(transitions);
       break;
-    case "Left":
+    case 'Left':
       const boardAndState = slideBoardLeft(board);
       gameBoard = boardAndState[0];
 
@@ -327,7 +327,7 @@ function slide(direction, board) {
 
       doTransitions(transitions);
       break;
-    case "Right":
+    case 'Right':
       // slide right only needs to worry about the change in col
       let boardReversed = reverseBoard(board);
       let slideReversedBoard = slideBoardLeft(boardReversed);
@@ -410,9 +410,9 @@ function doTransitions(transitionArray) {
   for (let i = 0; i < numOfTransitions; i++) {
     const boxTransition = transitionArray[i];
     const boxName = boxTransition.name;
-    if (boxName === "move") {
+    if (boxName === 'move') {
       moveHandler(boxTransition);
-    } else if (boxName === "merge") {
+    } else if (boxName === 'merge') {
       mergeHandler(boxTransition);
     }
   }
@@ -423,7 +423,7 @@ function placeNewNumber(board, num) {
 
   let emptyIndexes = [];
   for (let j = 0; j < 4; j++) {
-    for (k = 0; k < 4; k++) {
+    for (let k = 0; k < 4; k++) {
       // changed from "" to 0
       if (board[j][k] === 0) {
         emptyIndexes.push([j, k]);
@@ -486,42 +486,42 @@ function getBoxPosition(row, col, boardWidth) {
 function addColor(val, box) {
   switch (val) {
     case 2:
-      box.classList.add("two");
+      box.classList.add('two');
       break;
     case 4:
-      box.classList.add("four");
+      box.classList.add('four');
       break;
     case 8:
-      box.classList.add("eight");
+      box.classList.add('eight');
       break;
     case 16:
-      box.classList.add("one-six");
+      box.classList.add('one-six');
       break;
     case 32:
-      box.classList.add("three-two");
+      box.classList.add('three-two');
       break;
     case 64:
-      box.classList.add("six-four");
+      box.classList.add('six-four');
       break;
     case 128:
-      box.classList.add("one-two-eight");
+      box.classList.add('one-two-eight');
       break;
     case 256:
-      box.classList.add("two-five-six");
+      box.classList.add('two-five-six');
       break;
     case 512:
-      box.classList.add("five-one-two");
+      box.classList.add('five-one-two');
       break;
     case 1024:
-      box.classList.add("one-zero-two-four");
+      box.classList.add('one-zero-two-four');
       break;
     case 2048:
       // has a gold glow around the box
       // glow color = #E7C677
-      box.classList.add("two-zero-four-eight");
+      box.classList.add('two-zero-four-eight');
       break;
     case 4096:
-      box.classList.add("four-zero-nine-six");
+      box.classList.add('four-zero-nine-six');
       break;
   }
 }
@@ -532,25 +532,25 @@ function controllerAdd(row, col, val, toMerge) {
   box.colBoxPosition = col;
   box.val = val;
   // box.id = "row" + row + "col" + col;
-  let domBox = document.createElement("div");
+  let domBox = document.createElement('div');
   box.theDiv = domBox;
-  const boardWidth = document.getElementsByClassName("board")[0].clientWidth;
+  const boardWidth = document.getElementsByClassName('board')[0].clientWidth;
   const boxPos = getBoxPosition(row, col, boardWidth);
-  domBox.classList.add("overlay-box");
+  domBox.classList.add('overlay-box');
 
   addColor(val, domBox);
 
   if (toMerge) {
-    domBox.classList.add("merge-effect");
+    domBox.classList.add('merge-effect');
   } else {
-    domBox.classList.add("bounce-effect");
+    domBox.classList.add('bounce-effect');
   }
-  domBox.style.top = boxPos[0] + "px";
-  domBox.style.left = boxPos[1] + "px";
+  domBox.style.top = boxPos[0] + 'px';
+  domBox.style.left = boxPos[1] + 'px';
   domBox.innerHTML = val;
   // domBox.setAttribute("id", box.id);
   boxes.push(box);
-  let container = document.getElementsByClassName("overlay-container")[0];
+  let container = document.getElementsByClassName('overlay-container')[0];
 
   container.appendChild(domBox);
 }
@@ -566,22 +566,22 @@ function controllerMove(transitionBox) {
   // console.log("startCol: " + startCol);
   // console.log("finalCol: " + finalCol);
   const startBox = findBox(startRow, startCol, boxes);
-  const boardWidth = document.getElementsByClassName("board")[0].clientWidth;
+  const boardWidth = document.getElementsByClassName('board')[0].clientWidth;
   const finalBoxPos = getBoxPosition(finalRow, finalCol, boardWidth);
   // console.log(startBox);
   // console.log(boxes);
   //
-  startBox.theDiv.style.top = finalBoxPos[0] + "px";
-  startBox.theDiv.style.left = finalBoxPos[1] + "px";
+  startBox.theDiv.style.top = finalBoxPos[0] + 'px';
+  startBox.theDiv.style.left = finalBoxPos[1] + 'px';
   startBox.colBoxPosition = finalCol;
   startBox.rowBoxPosition = finalRow;
   transitionsInProgress += 1;
 
   const listener = function(event) {
     transitionsInProgress -= 1;
-    startBox.theDiv.removeEventListener("transitionend", listener);
+    startBox.theDiv.removeEventListener('transitionend', listener);
   };
-  startBox.theDiv.addEventListener("transitionend", listener);
+  startBox.theDiv.addEventListener('transitionend', listener);
   // startBox.id = "row" + row + "col" + finalCol;
   // startBox.theDiv.setAttribute("id", startBox.id);
 }
@@ -597,15 +597,15 @@ function controllerMerge(transitionBox) {
 
   // add finalVal to score
   const scores = scoreKeeper(finalVal);
-  let bestScoreElement = document.getElementsByClassName("best-score")[0];
-  let currentScoreElement = document.getElementsByClassName("current-score")[0];
+  let bestScoreElement = document.getElementsByClassName('best-score')[0];
+  let currentScoreElement = document.getElementsByClassName('current-score')[0];
   const newCurrentScore = scores[0];
   const newBestScore = scores[1];
 
   bestScoreElement.innerHTML = newBestScore;
   currentScoreElement.innerHTML = newCurrentScore;
 
-  const boardWidth = document.getElementsByClassName("board")[0].clientWidth;
+  const boardWidth = document.getElementsByClassName('board')[0].clientWidth;
   const boxPos = getBoxPosition(finalRow, finalCol, boardWidth);
 
   // have to change the id of the boxes to be deleted. when transition ends, the call back will remove
@@ -631,7 +631,7 @@ function controllerMerge(transitionBox) {
   const finalBoxDiv = finalBox.theDiv;
   deleteBox(startRow, startCol, boxes);
   deleteBox(finalRow, finalCol, boxes);
-  startBoxDiv.addEventListener("transitionend", function(event) {
+  startBoxDiv.addEventListener('transitionend', function(event) {
     // remove both boxes to create the new box
     // can send extra arguement to addHandler to say that its a merge and not add bounce class
     startBoxDiv.remove();
@@ -640,30 +640,30 @@ function controllerMerge(transitionBox) {
     transitionsInProgress -= 1;
   });
   // box move transition
-  startBox.theDiv.style.top = boxPos[0] + "px";
-  startBox.theDiv.style.left = boxPos[1] + "px";
+  startBox.theDiv.style.top = boxPos[0] + 'px';
+  startBox.theDiv.style.left = boxPos[1] + 'px';
   transitionsInProgress += 1;
 }
 
-const newGameButton = document.getElementsByClassName("new-game-btn")[0];
+const newGameButton = document.getElementsByClassName('new-game-btn')[0];
 
-newGameButton.addEventListener("click", function() {
+newGameButton.addEventListener('click', function() {
   const overlayContainer = document.getElementsByClassName(
-    "overlay-container"
+    'overlay-container'
   )[0];
   while (overlayContainer.lastChild) {
     overlayContainer.removeChild(overlayContainer.lastChild);
   }
 
-  let currentScoreElement = document.getElementsByClassName("current-score")[0];
+  let currentScoreElement = document.getElementsByClassName('current-score')[0];
   currentScoreElement.innerHTML = 0;
 
   newGame();
 });
 
-document.addEventListener("keydown", function(pressedKey) {
+document.addEventListener('keydown', function(pressedKey) {
   // map arrowup to up for model
-  let validKeys = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
+  let validKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
   let key = pressedKey.code;
   let board = getBoard();
 
@@ -675,17 +675,17 @@ document.addEventListener("keydown", function(pressedKey) {
     }
 
     switch (key) {
-      case "ArrowUp":
-        slide("Up", board);
+      case 'ArrowUp':
+        slide('Up', board);
         break;
-      case "ArrowDown":
-        slide("Down", board);
+      case 'ArrowDown':
+        slide('Down', board);
         break;
-      case "ArrowLeft":
-        slide("Left", board);
+      case 'ArrowLeft':
+        slide('Left', board);
         break;
-      case "ArrowRight":
-        slide("Right", board);
+      case 'ArrowRight':
+        slide('Right', board);
         break;
     }
   }
