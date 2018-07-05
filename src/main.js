@@ -1,28 +1,24 @@
-// let gameBoard = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
-// let boxes = [];
 import * as app from './app';
 
 app.run();
+
+// --------------------------------------------------------------
+// MODEL
+
+let addHandler;
+let mergeHandler;
+let moveHandler;
+let boxes = [];
+let gameBoard = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+let bestScore = 0;
+let score = 0;
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
-Object.prototype.isEmpty = function() {
-  for (let key in this) {
-    if (this.hasOwnProperty(key)) {
-      return false;
-    }
-  }
-  return true;
-};
-
-function printBoard(board) {
-  for (let i = 0; i < 4; i++) {
-    console.log(board[i]);
-  }
-}
-
+// TODO: For these functions, maybe just manipulate the input for simplicity?
+// TODO: rename it to flipBoard
 function reverseBoard(board) {
   let result = [];
   for (let i = 0; i < 4; i++) {
@@ -32,6 +28,7 @@ function reverseBoard(board) {
   return result;
 }
 
+// TODO: rename to rotateBoardLeft
 function upRotateBoard(board) {
   result = [[], [], [], []];
   for (let i = 0; i < 4; i++) {
@@ -43,6 +40,8 @@ function upRotateBoard(board) {
   return result;
 }
 
+// TODO: rename to rotateBoardRight
+// TODO: this can be implemented by a rotateBoardLeft and a flipBoard
 function bottomRotateBoard(board) {
   result = [[], [], [], []];
   for (let i = 0; i < 4; i++) {
@@ -72,66 +71,6 @@ function copyBoard(board) {
   }
   return copy;
 }
-
-function gameOver(keyMoves, gameBoard) {
-  let originalBoard = copyBoard(gameBoard);
-  let falseCount = 0;
-
-  for (let i of keyMoves) {
-    let newBoard = slideBoard(i, originalBoard);
-    let valid = validateMove(newBoard, originalBoard);
-    if (!valid) {
-      falseCount += 1;
-    }
-    originalBoard = copyBoard(gameBoard);
-  }
-  if (falseCount >= 4) {
-    console.log('Game Over!');
-  }
-}
-
-////////////////////// controller.js
-
-// function evemtHandler(event) {
-//   if (event.name == 'new') {
-//     insert a div into the dom and perfom animation
-//   }
-// }
-
-// model.initialize(eventhandler);
-
-// // model.js
-
-// var eventHandler;
-
-// function initialize(handler) {
-//   eventHandler = handler;
-
-//   // do some logic
-
-//   eventHandler
-// }
-
-// --------------------------------------------------------------
-// model has interface that determines what the controller can do with it.
-// lets controller call initialize and pass an eventhandler
-// has a getboard funtion so that controller can get the board at any time
-// has a slide function that the controller passes a direction in which the model defines. .
-// model has its own string for "up" even though the controller gets a key from the browser that is gonna be "ArrowUp". Need to map it to "Up" because the model decides what it should be
-// model will use the eventhandler, that takes 1 argument, passed in from controller and pass an event of what happened
-// controller will then react to what event it is, either add or move
-// controller can tell if a merge happened because it can check the values of the board either by looking at the browser's div and getting the value or storing a copy of the old board in the controller and comparing it with the new board from model
-// important to use the MVC way because it is a separation of concerns and if we ever switch out a part, it will still work because they are independent of each other. The controller can have direct access to the M and V but the M and V only have callbacks to controller
-
-// --------------------------------------------------------------
-// MODEL
-
-// look into window onload
-let addHandler;
-let mergeHandler;
-let moveHandler;
-let boxes = [];
-let gameBoard = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
 
 function initialize(add, move, merge) {
   addHandler = add;
@@ -380,22 +319,6 @@ function slide(direction, board) {
   gameBoard = placeNewNumber(board, 1);
 }
 
-function findBox(row, col, boxes) {
-  const boxesLength = boxes.length;
-  for (let k = 0; k < boxesLength; k++) {
-    const aBox = boxes[k];
-    if (aBox.rowBoxPosition === row && aBox.colBoxPosition === col) {
-      return aBox;
-    }
-  }
-}
-
-function printBoxes(boxes) {
-  for (let i = 0; i < boxes.length; i++) {
-    console.log(boxes[i]);
-  }
-}
-
 function deleteBox(row, col, boxes) {
   const boxesLength = boxes.length;
   for (let k = 0; k < boxesLength; k++) {
@@ -454,9 +377,6 @@ function placeNewNumber(board, num) {
   return copy;
 }
 
-let bestScore = 0;
-let score = 0;
-
 function scoreKeeper(val) {
   score += val;
   if (score >= bestScore) {
@@ -476,6 +396,22 @@ function newGame() {
 // --------------------------------------------------------------
 // CONTROLLER - no dom or css above this line
 let transitionsInProgress = 0;
+
+function printBoxes(boxes) {
+  for (let i = 0; i < boxes.length; i++) {
+    console.log(boxes[i]);
+  }
+}
+
+function findBox(row, col, boxes) {
+  const boxesLength = boxes.length;
+  for (let k = 0; k < boxesLength; k++) {
+    const aBox = boxes[k];
+    if (aBox.rowBoxPosition === row && aBox.colBoxPosition === col) {
+      return aBox;
+    }
+  }
+}
 
 function getBoxPosition(row, col, boardWidth) {
   const boxSize = (boardWidth * 107) / 500;
