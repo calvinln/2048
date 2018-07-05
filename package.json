@@ -4,7 +4,7 @@
   "description": "A replica of the 2048 game.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "start": "parcel index.html",
     "deploy": "parcel build index.html && firebase deploy"
   },
@@ -19,7 +19,15 @@
   },
   "homepage": "https://github.com/calvinln/2048#readme",
   "devDependencies": {
+    "babel-jest": "^23.2.0",
+    "babel-preset-env": "^1.7.0",
     "firebase-tools": "^3.19.1",
+    "jest": "^23.2.0",
     "parcel-bundler": "^1.9.3"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.jsx?$": "babel-jest"
+    }
   }
 }
