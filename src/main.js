@@ -30,7 +30,7 @@ function reverseBoard(board) {
 
 // TODO: rename to rotateBoardLeft
 function upRotateBoard(board) {
-  result = [[], [], [], []];
+  let result = [[], [], [], []];
   for (let i = 0; i < 4; i++) {
     result[i].push(board[0][i]);
     result[i].push(board[1][i]);
@@ -43,7 +43,7 @@ function upRotateBoard(board) {
 // TODO: rename to rotateBoardRight
 // TODO: this can be implemented by a rotateBoardLeft and a flipBoard
 function bottomRotateBoard(board) {
-  result = [[], [], [], []];
+  let result = [[], [], [], []];
   for (let i = 0; i < 4; i++) {
     result[i].push(board[3][i]);
     result[i].push(board[2][i]);
