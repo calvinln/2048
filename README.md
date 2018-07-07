@@ -8,4 +8,4 @@
 
 ### Deploy
 
-Pushing to master triggers deployment. To deploy manually, run `npm deploy`.
+Pushing to master triggers deployment. To deploy manually, run `npm deploy`..
