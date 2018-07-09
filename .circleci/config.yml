@@ -4,7 +4,7 @@
 #
 version: 2
 jobs:
-  build:
+  build-and-test:
     docker:
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
@@ -23,31 +23,28 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
       - run: ./node_modules/.bin/parcel build index.html
-  
-  test:
-    docker:
-      - image: circleci/node:7.10
-    steps:
-      - checkout
       - run: npm test
+      - persist_to_workspace:
+          root: .
+          paths:
+              - .
   
   deploy:
     docker:
       - image: circleci/node:7.10
     steps:
+      - attach_workspace:
+          at: .
       - run: ./node_modules/.bin/firebase deploy $FIREBASE_DEPLOY_TOKEN
 
 workflows:
   version: 2
   build-test-deploy:
     jobs:
-      - build
-      - test:
-          requires:
-            - build
+      - build-and-test
       - deploy:
           requires:
-            - test
+            - build-and-test
           filters:
             branches:
               only: master
