@@ -25,10 +25,10 @@ jobs:
       - run: ./node_modules/.bin/parcel build index.html
   
   test:
-    - checkout
     docker:
       - image: circleci/node:7.10
     steps:
+      - checkout
       - run: npm test
   
   deploy:
