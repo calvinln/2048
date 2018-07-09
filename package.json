@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "start": "parcel index.html",
-    "deploy": "parcel build index.html && firebase deploy"
+    "start": "parcel --no-cache index.html",
+    "deploy": "parcel build --no-cache index.html && firebase deploy"
   },
   "repository": {
     "type": "git",
