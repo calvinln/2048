@@ -5,37 +5,44 @@
 version: 2
 jobs:
   build:
-    branches:
-      only:
-        - master
     docker:
-      # specify the version you desire here
-      - image: circleci/node:7.10
-      
-      # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
-
-    working_directory: ~/repo
-
+      - image: circleci/node:7.10
     steps:
       - checkout
-
       # Download and cache dependencies
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "package.json" }}
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
-
       - run: npm install
-
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-      
       - run: ./node_modules/.bin/parcel build index.html
-      - run: ./node_modules/.bin/firebase deploy --token=1/EAPRZZdmMuberdKGIt-ueS1oW2ke3znxfDXU1QwCS1Q
+  
+  test:
+    steps:
+      - run: npm test
+  
+  deploy:
+    steps:
+      - run: ./node_modules/.bin/firebase deploy $FIREBASE_DEPLOY_TOKEN
 
+workflows:
+  version: 2
+  build-test-deploy:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - deploy:
+          requires:
+            - test
+          filters:
+            branches:
+              only: master
