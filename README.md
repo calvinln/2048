@@ -1,7 +1,5 @@
 # 2048 &middot; [![CircleCI](https://circleci.com/gh/calvinln/2048/tree/master.svg?style=svg)](https://circleci.com/gh/calvinln/2048/tree/master)
 
-[![CircleCI](https://circleci.com/gh/calvinln/2048/tree/master.svg?style=svg)](https://circleci.com/gh/calvinln/2048/tree/master)
-
 ### Development
 
 1.  Clone the repository.
