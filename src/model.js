@@ -1,8 +1,3 @@
-// TODO: delete this, for temporary testing only.
-export function add(a, b) {
-  return a + b;
-}
-
 export default class Game {
   // Public methods
   constructor(addHandler, moveHandler, mergeHandler) {
