@@ -22,7 +22,7 @@ export default class Game {
     switch (direction) {
       case 'Up':
         const upBoard = rotateBoardLeft(this.board_);
-        const slideUpBoard = slideBoardLeft(upBoard);
+        const slideUpBoard = this.slideBoardLeft_(upBoard);
         this.board_ = rotateBoardLeft(slideUpBoard[0]);
 
         transitions = slideUpBoard[1];
@@ -43,7 +43,7 @@ export default class Game {
         break;
       case 'Down':
         let bottomBoard = rotateBoardRight(this.board_);
-        let slideBottomBoard = slideBoardLeft(bottomBoard);
+        let slideBottomBoard = this.slideBoardLeft_(bottomBoard);
         transitions = slideBottomBoard[1];
         this.board_ = rotateBoardRight(
           rotateBoardRight(rotateBoardRight(slideBottomBoard[0]))
@@ -83,7 +83,7 @@ export default class Game {
         this.doTransitions_(transitions);
         break;
       case 'Left':
-        const boardAndState = slideBoardLeft(this.board_);
+        const boardAndState = this.slideBoardLeft_(this.board_);
         this.board_ = boardAndState[0];
 
         transitions = boardAndState[1];
@@ -93,7 +93,7 @@ export default class Game {
       case 'Right':
         // slide right only needs to worry about the change in col
         let boardReversed = flipBoard(this.board_);
-        let slideReversedBoard = slideBoardLeft(boardReversed);
+        let slideReversedBoard = this.slideBoardLeft_(boardReversed);
         this.board_ = flipBoard(slideReversedBoard[0]);
 
         transitions = slideReversedBoard[1];
@@ -135,7 +135,9 @@ export default class Game {
     this.placeNewNumbers_(1);
   }
 
-  getScore() {}
+  getScore() {
+    return this.score_;
+  }
 
   getBoard() {}
 
@@ -185,6 +187,107 @@ export default class Game {
       }
     }
   }
+
+  slideBoardLeft_(board) {
+    let resultBoard = [];
+    let movePositionBoard = [];
+    for (let i = 0; i < 4; i++) {
+      const rowAndStates = this.slideRowLeft_(board[i], i);
+      const numOfTransitions = rowAndStates[1].length;
+      resultBoard.push(rowAndStates[0]);
+      for (let j = 0; j < numOfTransitions; j++) {
+        movePositionBoard.push(rowAndStates[1][j]);
+      }
+    }
+    return [resultBoard, movePositionBoard];
+  }
+
+  slideRowLeft_(row, rowNumber) {
+    let copyOfRow = row.slice();
+    let currentIndex = 0;
+    let states = [];
+    // return an array of objects that has what position it was from and moved to. Then it will
+    // make a board of transitions and we can rotate that board like we rotate board
+    // to accomodate for the different directions
+
+    for (let i = 1; i < 4; i++) {
+      if (copyOfRow[i] === 0) {
+        continue;
+      }
+
+      let boxState = {};
+
+      // if currentIndex is 0, swap it with the next index value
+      if (copyOfRow[currentIndex] === 0) {
+        // moveHandler();
+        let value = copyOfRow[i];
+        copyOfRow[currentIndex] = value;
+        boxState.name = 'move';
+        boxState.startCol = i;
+        boxState.startRow = rowNumber;
+        boxState.finalCol = currentIndex;
+        boxState.finalRow = rowNumber;
+        boxState.val = value;
+
+        states.push(boxState);
+      }
+      // currentIndex value is the same as i, merge into one
+      else if (copyOfRow[currentIndex] === copyOfRow[i]) {
+        copyOfRow[currentIndex] += copyOfRow[i];
+        // mergeHandler()
+        boxState.name = 'merge';
+        boxState.startCol = i;
+        boxState.startRow = rowNumber;
+        boxState.finalCol = currentIndex;
+        boxState.finalRow = rowNumber;
+        boxState.val = copyOfRow[currentIndex];
+        this.score_ += boxState.val;
+        states.push(boxState);
+        currentIndex += 1;
+      }
+      // currentIndex is not same value as i AND value before i is 0
+      else if (
+        copyOfRow[currentIndex] !== copyOfRow[i] &&
+        copyOfRow[i - 1] === 0
+      ) {
+        // if currentIndex + 1 is 0, we move i there. ex [2, 0, 0, 4]
+        if (copyOfRow[currentIndex + 1] === 0) {
+          copyOfRow[currentIndex + 1] = copyOfRow[i];
+          boxState.name = 'move';
+          boxState.startCol = i;
+          boxState.startRow = rowNumber;
+          boxState.finalCol = currentIndex + 1;
+          boxState.finalRow = rowNumber;
+          boxState.val = copyOfRow[currentIndex + 1];
+
+          // -------------------------
+          currentIndex += 1;
+          // -------------------------
+
+          states.push(boxState);
+        } else {
+          // moving i to i - 1, there isn't consecutive zeroes, just 1 zero before it
+          copyOfRow[i - 1] = copyOfRow[i];
+          boxState.name = 'move';
+          boxState.startCol = i;
+          boxState.startRow = rowNumber;
+          boxState.finalCol = i - 1;
+          boxState.finalRow = rowNumber;
+          boxState.val = copyOfRow[i - 1];
+
+          //-------------------------
+          // currentIndex += 1;
+          //-------------------------
+          states.push(boxState);
+        }
+      } else {
+        currentIndex += 1;
+        continue;
+      }
+      copyOfRow[i] = 0;
+    }
+    return [copyOfRow, states];
+  }
 }
 
 function getRandomInt(max) {
@@ -221,105 +324,4 @@ function rotateBoardRight(board) {
     result[i].push(board[0][i]);
   }
   return result;
-}
-
-function slideBoardLeft(board) {
-  let resultBoard = [];
-  let movePositionBoard = [];
-  for (let i = 0; i < 4; i++) {
-    const rowAndStates = slideRowLeft(board[i], i);
-    const numOfTransitions = rowAndStates[1].length;
-    resultBoard.push(rowAndStates[0]);
-    for (let j = 0; j < numOfTransitions; j++) {
-      movePositionBoard.push(rowAndStates[1][j]);
-    }
-  }
-  return [resultBoard, movePositionBoard];
-}
-
-function slideRowLeft(row, rowNumber) {
-  let copyOfRow = row.slice();
-  let currentIndex = 0;
-  let states = [];
-  // return an array of objects that has what position it was from and moved to. Then it will
-  // make a board of transitions and we can rotate that board like we rotate board
-  // to accomodate for the different directions
-
-  for (let i = 1; i < 4; i++) {
-    if (copyOfRow[i] === 0) {
-      continue;
-    }
-
-    let boxState = {};
-
-    // if currentIndex is 0, swap it with the next index value
-    if (copyOfRow[currentIndex] === 0) {
-      // moveHandler();
-      let value = copyOfRow[i];
-      copyOfRow[currentIndex] = value;
-      boxState.name = 'move';
-      boxState.startCol = i;
-      boxState.startRow = rowNumber;
-      boxState.finalCol = currentIndex;
-      boxState.finalRow = rowNumber;
-      boxState.val = value;
-
-      states.push(boxState);
-    }
-    // currentIndex value is the same as i, merge into one
-    else if (copyOfRow[currentIndex] === copyOfRow[i]) {
-      copyOfRow[currentIndex] += copyOfRow[i];
-      // mergeHandler()
-      boxState.name = 'merge';
-      boxState.startCol = i;
-      boxState.startRow = rowNumber;
-      boxState.finalCol = currentIndex;
-      boxState.finalRow = rowNumber;
-      boxState.val = copyOfRow[currentIndex];
-
-      states.push(boxState);
-      currentIndex += 1;
-    }
-    // currentIndex is not same value as i AND value before i is 0
-    else if (
-      copyOfRow[currentIndex] !== copyOfRow[i] &&
-      copyOfRow[i - 1] === 0
-    ) {
-      // if currentIndex + 1 is 0, we move i there. ex [2, 0, 0, 4]
-      if (copyOfRow[currentIndex + 1] === 0) {
-        copyOfRow[currentIndex + 1] = copyOfRow[i];
-        boxState.name = 'move';
-        boxState.startCol = i;
-        boxState.startRow = rowNumber;
-        boxState.finalCol = currentIndex + 1;
-        boxState.finalRow = rowNumber;
-        boxState.val = copyOfRow[currentIndex + 1];
-
-        // -------------------------
-        currentIndex += 1;
-        // -------------------------
-
-        states.push(boxState);
-      } else {
-        // moving i to i - 1, there isn't consecutive zeroes, just 1 zero before it
-        copyOfRow[i - 1] = copyOfRow[i];
-        boxState.name = 'move';
-        boxState.startCol = i;
-        boxState.startRow = rowNumber;
-        boxState.finalCol = i - 1;
-        boxState.finalRow = rowNumber;
-        boxState.val = copyOfRow[i - 1];
-
-        //-------------------------
-        // currentIndex += 1;
-        //-------------------------
-        states.push(boxState);
-      }
-    } else {
-      currentIndex += 1;
-      continue;
-    }
-    copyOfRow[i] = 0;
-  }
-  return [copyOfRow, states];
 }

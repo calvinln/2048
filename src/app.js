@@ -85,8 +85,6 @@ function addColor(val, box) {
 }
 
 function handleAdd(row, col, val, toMerge) {
-  console.log(row, col, val, toMerge);
-
   let box = {};
   box.rowBoxPosition = row;
   box.colBoxPosition = col;
@@ -150,12 +148,12 @@ function handleMerge(transitionBox) {
   // add finalVal to score
   // const scores = scoreKeeper(finalVal);
   // let bestScoreElement = document.getElementsByClassName('best-score')[0];
-  // let currentScoreElement = document.getElementsByClassName('current-score')[0];
-  // const newCurrentScore = scores[0];
+  let currentScoreElement = document.getElementsByClassName('current-score')[0];
+  const newCurrentScore = game.getScore();
   // const newBestScore = scores[1];
 
   // bestScoreElement.innerHTML = newBestScore;
-  // currentScoreElement.innerHTML = newCurrentScore;
+  currentScoreElement.innerHTML = newCurrentScore;
 
   const boardWidth = document.getElementsByClassName('board')[0].clientWidth;
   const boxPos = getBoxPosition(finalRow, finalCol, boardWidth);
