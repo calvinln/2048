@@ -1,4 +1,51 @@
-export default class Game {
+/**
+ * Location represents a location on the game board by a row number and a column number.
+ * Row 0 is the top-most row. Column 0 is the left-most column.
+ */
+export class Location {
+  constructor(row, column) {
+    this.row = row;
+    this.column = column;
+  }
+
+  /**
+   * Swap the row and column of this location.
+   */
+  swapRowAndColumn() {
+    this.row = this.column;
+    this.column = this.row;
+  }
+}
+
+/**
+ * Enums for possible Event names.
+ */
+export const EventName = {
+  NUMBER_ADDED: 'number_added',
+  NUMBER_MOVED: 'number_moved',
+  NUMBER_MERGED: 'number_merged'
+};
+
+/**
+ *
+ */
+export class Event {
+  constructor(name, startLocation, endLocation, value) {
+    this.name = name;
+    this.startLocation = startLocation;
+    this.endLocation = endLocation;
+    this.value = value;
+  }
+}
+
+export const Direction = {
+  UP: 'up',
+  DOWN: 'down',
+  LEFT: 'left',
+  RIGHT: 'right'
+};
+
+export class Game {
   // Public methods
   constructor(addHandler, moveHandler, mergeHandler) {
     this.addHandler_ = addHandler;
@@ -134,7 +181,9 @@ export default class Game {
     return this.score_;
   }
 
-  getBoard() {}
+  getBoard() {
+    // TODO: We need to return a copy of the board here so that it can't be mutated.
+  }
 
   isGameOver() {}
 

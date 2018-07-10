@@ -1,4 +1,4 @@
-import Game from './model';
+import { Game } from './model';
 
 let transitionsInProgress = 0;
 let boxes = [];
