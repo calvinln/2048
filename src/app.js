@@ -107,6 +107,44 @@ function handleAdd(row, col, val, toMerge) {
   let container = document.getElementsByClassName('overlay-container')[0];
 
   container.appendChild(domBox);
+
+  if (game.isGameOver()) {
+    console.log('OVER');
+    let board = document.getElementsByClassName('board')[0];
+    const listener = function(event) {
+      board.removeEventListener('animationend', listener);
+      // let gameoverContainer = board;
+      // console.log(gameoverContainer);
+      let gameoverOverlay = document.createElement('div');
+      gameoverOverlay.classList.add('gameover-overlay');
+      let message = document.createElement('p');
+      message.innerHTML = 'Game over!';
+      message.classList.add('message');
+      // let tryAgainBtn = document.createElement('button');
+      // tryAgainBtn.onclick = function() {
+      //   container.removeChild(gameoverOverlay);
+      //   backgroundContainer.classList.remove('fade-effect');
+      //   overlayContainer.classList.remove('fade-effect');
+      //   resetBoxVisuals();
+      // };
+      gameoverOverlay.appendChild(message);
+      // gameoverOverlay.appendChild(tryAgainBtn);
+      // tryAgainBtn.innerHTML = 'Try again';
+      // tryAgainBtn.classList.add('try-again');
+      board.appendChild(gameoverOverlay);
+    };
+
+    board.addEventListener('animationend', listener);
+    let backgroundContainer = document.getElementsByClassName(
+      'background-container'
+    )[0];
+    let overlayContainer = document.getElementsByClassName(
+      'overlay-container'
+    )[0];
+    backgroundContainer.classList.add('fade-effect');
+    overlayContainer.classList.add('fade-effect');
+    // board.classList.add('fade-effect');
+  }
 }
 
 function handleMove(transitionBox) {

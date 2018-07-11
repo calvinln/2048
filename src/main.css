@@ -1,6 +1,6 @@
 body {
   background-color: #faf8ef;
-  font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+  font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
   color: #776e65;
 }
 
@@ -250,12 +250,46 @@ a {
   font-weight: bold;
 }
 
+.gameover-overlay {
+  position: relative;
+  font-size: 57.5px;
+  font-weight: bold;
+  width: 500px;
+  top: 200px;
+  left: 90px;
+  animation: move-up 1.5s 0.5s ease-in-out forwards;
+}
+
 .bounce-effect {
   animation: pop-in 0.5s;
 }
 
 .merge-effect {
   animation: pop-out 0.2s;
+}
+
+.fade-effect {
+  animation: fade-out 0.5s forwards;
+}
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes move-up {
+  0% {
+    top: 200px;
+  }
+
+  100% {
+    top: 145px;
+  }
 }
 
 @keyframes pop-out {

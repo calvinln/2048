@@ -8,6 +8,10 @@ export class Location {
     this.column = column;
   }
 
+  isInBoard() {
+    return this.row >= 0 && this.row < 4 && this.column >= 0 && this.column < 4;
+  }
+
   /**
    * Swap the row and column of this location.
    */
@@ -187,10 +191,46 @@ export class Game {
     // TODO: We need to return a copy of the board here so that it can't be mutated.
   }
 
-  isGameOver() {}
+  isGameOver() {
+    if (this.isBoardFull_()) {
+      for (let row = 0; row < 4; row++) {
+        for (let col = 0; col < 4; col++) {
+          let currentNumber = this.board_[row][col];
+          let locations = [
+            new Location(row + 1, col),
+            new Location(row - 1, col),
+            new Location(row, col + 1),
+            new Location(row, col - 1)
+          ];
+          for (let i = 0; i < 4; i++) {
+            let neighbor = locations[i];
+            if (neighbor.isInBoard()) {
+              if (
+                currentNumber === this.board_[neighbor.row][neighbor.column]
+              ) {
+                return false;
+              }
+            }
+          }
+        }
+      }
+      return true;
+    }
+  }
 
   // ------------------------------------------------------------------------
   // Private methods
+
+  isBoardFull_() {
+    for (let i = 0; i < 4; i++) {
+      for (let j = 0; j < 4; j++) {
+        if (this.board_[i][j] === 0) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
 
   placeNewNumbers_(count) {
     let emptyIndices = [];
