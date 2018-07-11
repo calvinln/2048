@@ -4,7 +4,7 @@ body {
   color: #776e65;
 }
 
-.head-paragraph {
+#head-paragraph {
   width: 500px;
   height: 250px;
   margin: 0 auto;
@@ -31,33 +31,33 @@ body {
   margin-top: 8px;
 }
 
-.best-score,
-.current-score {
+#best-score,
+#current-score {
   font-size: 28px;
 }
 
-.left-score-rectangle {
+#left-score-rectangle {
   left: 275px;
 }
 
-.right-score-rectangle {
+#right-score-rectangle {
   left: 390px;
 }
 
-.game-title {
+#game-title {
   position: absolute;
   top: 80px;
   font-size: 72px;
   font-weight: bold;
 }
 
-.game-goal {
+#game-goal {
   position: absolute;
   top: 190px;
   font-size: 18.2px;
 }
 
-.new-game-btn {
+#new-game-btn {
   background-color: #8f7a66;
   position: absolute;
   top: 182px;
@@ -71,7 +71,7 @@ body {
   color: #eee4da;
 }
 
-.new-game-btn:hover {
+#new-game-btn:hover {
   cursor: pointer;
 }
 
@@ -89,7 +89,7 @@ a {
   font-weight: bold;
 }
 
-.bottom-paragraph {
+#bottom-paragraph {
   width: 500px;
   height: 500px;
   /* border: dashed blue; */
@@ -97,14 +97,14 @@ a {
   position: relative;
 }
 
-.directions {
+#directions {
   position: absolute;
   top: 40px;
   font-size: 18px;
   line-height: 1.8;
 }
 
-.first-horizontal-rule {
+#first-horizontal-rule {
   position: absolute;
   top: 130px;
   width: 100%;
@@ -112,14 +112,14 @@ a {
   border-color: #d8d4d0;
 }
 
-.disclaimer-note {
+#disclaimer-note {
   position: absolute;
   top: 165px;
   font-size: 18px;
   line-height: 1.8;
 }
 
-.second-horizontal-rule {
+#second-horizontal-rule {
   position: absolute;
   top: 220px;
   width: 100%;
@@ -127,7 +127,7 @@ a {
   border-color: #d8d4d0;
 }
 
-.signature {
+#signature {
   position: absolute;
   top: 250px;
   font-size: 18px;
@@ -194,13 +194,13 @@ a {
   color: #b3afac;
 }
 
-.board {
+#board {
   width: 500px;
   height: 500px;
   margin: 0 auto;
 }
 
-.background-container {
+#background-container {
   width: 500px;
   height: 500px;
   margin: 0 auto;
@@ -223,7 +223,7 @@ a {
   display: inline-block;
 }
 
-.overlay-container {
+#overlay-container {
   width: 500px;
   height: 500px;
   border-radius: 6px;
@@ -250,7 +250,7 @@ a {
   font-weight: bold;
 }
 
-.gameover-overlay {
+#gameover-overlay {
   position: relative;
   font-size: 57.5px;
   font-weight: bold;

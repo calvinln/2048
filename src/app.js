@@ -89,7 +89,7 @@ function handleAdd(row, col, val, toMerge) {
   box.val = val;
   let domBox = document.createElement('div');
   box.theDiv = domBox;
-  const boardWidth = document.getElementsByClassName('board')[0].clientWidth;
+  const boardWidth = document.getElementById('board').clientWidth;
   const boxPos = getBoxPosition(row, col, boardWidth);
   domBox.classList.add('overlay-box');
 
@@ -104,19 +104,17 @@ function handleAdd(row, col, val, toMerge) {
   domBox.style.left = boxPos[1] + 'px';
   domBox.innerHTML = val;
   boxes.push(box);
-  let container = document.getElementsByClassName('overlay-container')[0];
+  let container = document.getElementById('overlay-container');
 
   container.appendChild(domBox);
 
   if (game.isGameOver()) {
     console.log('OVER');
-    let board = document.getElementsByClassName('board')[0];
+    let board = document.getElementById('board');
     const listener = function(event) {
       board.removeEventListener('animationend', listener);
-      // let gameoverContainer = board;
-      // console.log(gameoverContainer);
       let gameoverOverlay = document.createElement('div');
-      gameoverOverlay.classList.add('gameover-overlay');
+      gameoverOverlay.id = 'gameover-overlay';
       let message = document.createElement('p');
       message.innerHTML = 'Game over!';
       message.classList.add('message');
@@ -135,12 +133,8 @@ function handleAdd(row, col, val, toMerge) {
     };
 
     board.addEventListener('animationend', listener);
-    let backgroundContainer = document.getElementsByClassName(
-      'background-container'
-    )[0];
-    let overlayContainer = document.getElementsByClassName(
-      'overlay-container'
-    )[0];
+    let backgroundContainer = document.getElementById('background-container');
+    let overlayContainer = document.getElementById('overlay-container');
     backgroundContainer.classList.add('fade-effect');
     overlayContainer.classList.add('fade-effect');
     // board.classList.add('fade-effect');
@@ -154,7 +148,7 @@ function handleMove(transitionBox) {
   const finalCol = transitionBox.finalCol;
 
   const startBox = findBox(startRow, startCol, boxes);
-  const boardWidth = document.getElementsByClassName('board')[0].clientWidth;
+  const boardWidth = document.getElementById('board').clientWidth;
   const finalBoxPos = getBoxPosition(finalRow, finalCol, boardWidth);
 
   startBox.theDiv.style.top = finalBoxPos[0] + 'px';
@@ -179,15 +173,15 @@ function handleMerge(transitionBox) {
   const finalBox = findBox(finalRow, finalCol, boxes);
   const finalVal = startBox.val + finalBox.val;
 
-  // let bestScoreElement = document.getElementsByClassName('best-score')[0];
-  let currentScoreElement = document.getElementsByClassName('current-score')[0];
+  // let bestScoreElement = document.getElementById('best-score')[0];
+  let currentScoreElement = document.getElementById('current-score');
   const newCurrentScore = game.getScore();
   // const newBestScore = scores[1];
 
   // bestScoreElement.innerHTML = newBestScore;
   currentScoreElement.innerHTML = newCurrentScore;
 
-  const boardWidth = document.getElementsByClassName('board')[0].clientWidth;
+  const boardWidth = document.getElementById('board').clientWidth;
   const boxPos = getBoxPosition(finalRow, finalCol, boardWidth);
 
   const startBoxDiv = startBox.theDiv;
@@ -212,18 +206,14 @@ export function run() {
   game = new Game(handleAdd, handleMove, handleMerge);
   game.restart();
 
-  const newGameButton = document.getElementsByClassName('new-game-btn')[0];
+  const newGameButton = document.getElementById('new-game-btn');
   newGameButton.addEventListener('click', function() {
-    const overlayContainer = document.getElementsByClassName(
-      'overlay-container'
-    )[0];
+    const overlayContainer = document.getElementById('overlay-container');
     while (overlayContainer.lastChild) {
       overlayContainer.removeChild(overlayContainer.lastChild);
     }
 
-    let currentScoreElement = document.getElementsByClassName(
-      'current-score'
-    )[0];
+    let currentScoreElement = document.getElementById('current-score');
     currentScoreElement.innerHTML = 0;
 
     boxes = [];
