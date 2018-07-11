@@ -174,7 +174,9 @@ export class Game {
         this.doTransitions_(transitions);
         break;
     }
-    this.placeNewNumbers_(1);
+    if (transitions.length > 0) {
+      this.placeNewNumbers_(1);
+    }
   }
 
   getScore() {
