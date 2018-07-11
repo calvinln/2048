@@ -74,8 +74,6 @@ function addColor(val, box) {
       box.classList.add('one-zero-two-four');
       break;
     case 2048:
-      // has a gold glow around the box
-      // glow color = #E7C677
       box.classList.add('two-zero-four-eight');
       break;
     case 4096:
@@ -89,7 +87,6 @@ function handleAdd(row, col, val, toMerge) {
   box.rowBoxPosition = row;
   box.colBoxPosition = col;
   box.val = val;
-  // box.id = "row" + row + "col" + col;
   let domBox = document.createElement('div');
   box.theDiv = domBox;
   const boardWidth = document.getElementsByClassName('board')[0].clientWidth;
@@ -112,7 +109,6 @@ function handleAdd(row, col, val, toMerge) {
   container.appendChild(domBox);
 }
 
-// when boxes move, have to change id
 function handleMove(transitionBox) {
   const startRow = transitionBox.startRow;
   const startCol = transitionBox.startCol;
@@ -145,8 +141,6 @@ function handleMerge(transitionBox) {
   const finalBox = findBox(finalRow, finalCol, boxes);
   const finalVal = startBox.val + finalBox.val;
 
-  // add finalVal to score
-  // const scores = scoreKeeper(finalVal);
   // let bestScoreElement = document.getElementsByClassName('best-score')[0];
   let currentScoreElement = document.getElementsByClassName('current-score')[0];
   const newCurrentScore = game.getScore();
@@ -158,37 +152,18 @@ function handleMerge(transitionBox) {
   const boardWidth = document.getElementsByClassName('board')[0].clientWidth;
   const boxPos = getBoxPosition(finalRow, finalCol, boardWidth);
 
-  // have to change the id of the boxes to be deleted. when transition ends, the call back will remove
-  // the element with the start and final box id, but at that time, there could be a new box that
-  // moved and had its' id changed to the one we are trying to remove. therefore, removing the wrong
-  // box(s)
-  // look into remove by reference of the start and final box, don't need setattribute id strings at all
-
-  // startBox.id = startBox.id + "delete";
-  // finalBox.id = finalBox.id + "delete";
-  // finalBox.theDiv.setAttribute("id", finalBox.id);
-  // startBox.theDiv.setAttribute("id", startBox.id);
-  // let startBoxListener = document.getElementById(startBox.id);
-  // deleteBox(row, startCol, boxes);
-  // deleteBox(row, finalCol, boxes);
-  // startBoxListener.addEventListener("transitionend", function(event) {
-  //   document.getElementById(startBox.id).remove();
-  //   document.getElementById(finalBox.id).remove();
-  //   addHandler(row, finalCol, finalVal);
-  // });
-
   const startBoxDiv = startBox.theDiv;
   const finalBoxDiv = finalBox.theDiv;
   deleteBox(startRow, startCol, boxes);
   deleteBox(finalRow, finalCol, boxes);
-  startBoxDiv.addEventListener('transitionend', function(event) {
+  startBoxDiv.addEventListener('transitionend', function() {
     // remove both boxes to create the new box
-    // can send extra arguement to addHandler to say that its a merge and not add bounce class
     startBoxDiv.remove();
     finalBoxDiv.remove();
     handleAdd(finalRow, finalCol, finalVal, true);
     transitionsInProgress -= 1;
   });
+
   // box move transition
   startBox.theDiv.style.top = boxPos[0] + 'px';
   startBox.theDiv.style.left = boxPos[1] + 'px';

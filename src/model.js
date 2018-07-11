@@ -318,10 +318,6 @@ export class Game {
           boxState.finalCol = i - 1;
           boxState.finalRow = rowNumber;
           boxState.val = copyOfRow[i - 1];
-
-          //-------------------------
-          // currentIndex += 1;
-          //-------------------------
           states.push(boxState);
         }
       } else {
