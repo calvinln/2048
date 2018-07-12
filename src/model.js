@@ -275,17 +275,15 @@ export class Game {
   }
 
   slideBoardLeft_(board) {
-    let resultBoard = [];
     let movePositionBoard = [];
     for (let i = 0; i < 4; i++) {
-      const rowAndStates = this.slideRowLeft_(board[i], i);
-      const numOfTransitions = rowAndStates[1].length;
-      resultBoard.push(rowAndStates[0]);
+      const states = this.slideRowLeft_(board[i], i);
+      const numOfTransitions = states.length;
       for (let j = 0; j < numOfTransitions; j++) {
-        movePositionBoard.push(rowAndStates[1][j]);
+        movePositionBoard.push(states[j]);
       }
     }
-    return [resultBoard, movePositionBoard];
+    return [board, movePositionBoard];
   }
 
   slideRowLeft_(row, rowNumber) {
@@ -358,7 +356,7 @@ export class Game {
       }
       row[i] = 0;
     }
-    return [row, states];
+    return states;
   }
 }
 
