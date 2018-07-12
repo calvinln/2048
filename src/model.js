@@ -190,6 +190,7 @@ export class Game {
 
   getBoard() {
     // TODO: We need to return a copy of the board here so that it can't be mutated.
+    return copyBoard(this.board_);
   }
 
   isGameOver() {
