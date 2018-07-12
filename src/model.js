@@ -67,11 +67,13 @@ export class Game {
     let transitions;
     switch (direction) {
       case 'Up':
-        const upBoard = rotateBoardLeft(this.board_);
-        const slideUpBoard = this.slideBoardLeft_(upBoard);
-        this.board_ = rotateBoardLeft(slideUpBoard[0]);
+        // const upBoard = rotateBoardLeft(this.board_);
+        rotateBoardLeft(this.board_);
+        const movePositionBoard = this.slideBoardLeft_(this.board_);
+        // this.board_ = rotateBoardLeft(slideUpBoard[0]);
+        rotateBoardLeft(this.board_);
 
-        transitions = slideUpBoard[1];
+        transitions = movePositionBoard;
 
         for (let i = 0; i < transitions.length; i++) {
           let aTransition = transitions[i];
@@ -88,12 +90,12 @@ export class Game {
         this.doTransitions_(transitions);
         break;
       case 'Down':
-        let bottomBoard = rotateBoardRight(this.board_);
-        let slideBottomBoard = this.slideBoardLeft_(bottomBoard);
-        transitions = slideBottomBoard[1];
-        this.board_ = rotateBoardRight(
-          rotateBoardRight(rotateBoardRight(slideBottomBoard[0]))
-        );
+        rotateBoardRight(this.board_);
+        let slideBottomBoard = this.slideBoardLeft_(this.board_);
+        transitions = slideBottomBoard;
+        rotateBoardRight(this.board_);
+        rotateBoardRight(this.board_);
+        rotateBoardRight(this.board_);
 
         for (let i = 0; i < transitions.length; i++) {
           let initialRowStart;
@@ -130,19 +132,18 @@ export class Game {
         break;
       case 'Left':
         const boardAndState = this.slideBoardLeft_(this.board_);
-        this.board_ = boardAndState[0];
 
-        transitions = boardAndState[1];
+        transitions = boardAndState;
 
         this.doTransitions_(transitions);
         break;
       case 'Right':
         // slide right only needs to worry about the change in col
-        let boardReversed = flipBoard(this.board_);
-        let slideReversedBoard = this.slideBoardLeft_(boardReversed);
-        this.board_ = flipBoard(slideReversedBoard[0]);
+        flipBoard(this.board_);
+        let slideReversedBoard = this.slideBoardLeft_(this.board_);
+        flipBoard(this.board_);
 
-        transitions = slideReversedBoard[1];
+        transitions = slideReversedBoard;
 
         for (let i = 0; i < transitions.length; i++) {
           let aTransition = transitions[i];
@@ -283,7 +284,7 @@ export class Game {
         movePositionBoard.push(states[j]);
       }
     }
-    return [board, movePositionBoard];
+    return movePositionBoard;
   }
 
   slideRowLeft_(row, rowNumber) {
@@ -364,34 +365,34 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
-function flipBoard(board) {
-  let result = [];
+function copyBoard(board) {
+  let copy = [[], [], [], []];
   for (let i = 0; i < 4; i++) {
-    let row = board[i].slice().reverse();
-    result.push(row);
+    for (let j = 0; j < 4; j++) {
+      copy[i][j] = board[i][j];
+    }
   }
-  return result;
+  return copy;
+}
+
+function flipBoard(board) {
+  let copy = copyBoard(board);
+  for (let i = 0; i < 4; i++) {
+    board[i] = copy[i].reverse();
+  }
 }
 
 function rotateBoardLeft(board) {
-  let result = [[], [], [], []];
+  let copy = copyBoard(board);
   for (let i = 0; i < 4; i++) {
-    result[i].push(board[0][i]);
-    result[i].push(board[1][i]);
-    result[i].push(board[2][i]);
-    result[i].push(board[3][i]);
+    board[i][0] = copy[0][i];
+    board[i][1] = copy[1][i];
+    board[i][2] = copy[2][i];
+    board[i][3] = copy[3][i];
   }
-  return result;
 }
 
-// TODO: this can be implemented by a rotateBoardLeft and a flipBoard
 function rotateBoardRight(board) {
-  let result = [[], [], [], []];
-  for (let i = 0; i < 4; i++) {
-    result[i].push(board[3][i]);
-    result[i].push(board[2][i]);
-    result[i].push(board[1][i]);
-    result[i].push(board[0][i]);
-  }
-  return result;
+  rotateBoardLeft(board);
+  flipBoard(board);
 }
