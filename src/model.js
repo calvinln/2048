@@ -289,7 +289,6 @@ export class Game {
   }
 
   slideRowLeft_(row, rowNumber) {
-    let copyOfRow = row.slice();
     let currentIndex = 0;
     let states = [];
     // return an array of objects that has what position it was from and moved to. Then it will
@@ -297,78 +296,69 @@ export class Game {
     // to accomodate for the different directions
 
     for (let i = 1; i < 4; i++) {
-      if (copyOfRow[i] === 0) {
+      if (row[i] === 0) {
         continue;
       }
 
       let boxState = {};
 
       // if currentIndex is 0, swap it with the next index value
-      if (copyOfRow[currentIndex] === 0) {
-        // moveHandler();
-        let value = copyOfRow[i];
-        copyOfRow[currentIndex] = value;
+      if (row[currentIndex] === 0) {
+        let value = row[i];
+        row[currentIndex] = value;
         boxState.name = 'move';
         boxState.startCol = i;
         boxState.startRow = rowNumber;
         boxState.finalCol = currentIndex;
         boxState.finalRow = rowNumber;
         boxState.val = value;
-
         states.push(boxState);
       }
+
       // currentIndex value is the same as i, merge into one
-      else if (copyOfRow[currentIndex] === copyOfRow[i]) {
-        copyOfRow[currentIndex] += copyOfRow[i];
-        // mergeHandler()
+      else if (row[currentIndex] === row[i]) {
+        row[currentIndex] += row[i];
         boxState.name = 'merge';
         boxState.startCol = i;
         boxState.startRow = rowNumber;
         boxState.finalCol = currentIndex;
         boxState.finalRow = rowNumber;
-        boxState.val = copyOfRow[currentIndex];
+        boxState.val = row[currentIndex];
         this.score_ += boxState.val;
         states.push(boxState);
         currentIndex += 1;
       }
       // currentIndex is not same value as i AND value before i is 0
-      else if (
-        copyOfRow[currentIndex] !== copyOfRow[i] &&
-        copyOfRow[i - 1] === 0
-      ) {
+      else if (row[currentIndex] !== row[i] && row[i - 1] === 0) {
         // if currentIndex + 1 is 0, we move i there. ex [2, 0, 0, 4]
-        if (copyOfRow[currentIndex + 1] === 0) {
-          copyOfRow[currentIndex + 1] = copyOfRow[i];
+        if (row[currentIndex + 1] === 0) {
+          row[currentIndex + 1] = row[i];
           boxState.name = 'move';
           boxState.startCol = i;
           boxState.startRow = rowNumber;
           boxState.finalCol = currentIndex + 1;
           boxState.finalRow = rowNumber;
-          boxState.val = copyOfRow[currentIndex + 1];
-
-          // -------------------------
+          boxState.val = row[currentIndex + 1];
           currentIndex += 1;
-          // -------------------------
-
           states.push(boxState);
         } else {
           // moving i to i - 1, there isn't consecutive zeroes, just 1 zero before it
-          copyOfRow[i - 1] = copyOfRow[i];
+          row[i - 1] = row[i];
           boxState.name = 'move';
           boxState.startCol = i;
           boxState.startRow = rowNumber;
           boxState.finalCol = i - 1;
           boxState.finalRow = rowNumber;
-          boxState.val = copyOfRow[i - 1];
+          boxState.val = row[i - 1];
           states.push(boxState);
         }
       } else {
         currentIndex += 1;
         continue;
       }
-      copyOfRow[i] = 0;
+      row[i] = 0;
     }
-    return [copyOfRow, states];
+    return [row, states];
   }
 }
 

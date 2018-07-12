@@ -109,9 +109,8 @@ function handleAdd(row, col, val, toMerge) {
   container.appendChild(domBox);
 
   if (game.isGameOver()) {
-    console.log('OVER');
     let board = document.getElementById('board');
-    const listener = function(event) {
+    const listener = function() {
       board.removeEventListener('animationend', listener);
       let gameoverOverlay = document.createElement('div');
       gameoverOverlay.id = 'gameover-overlay';
