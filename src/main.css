@@ -265,7 +265,7 @@ a {
 }
 
 .merge-effect {
-  animation: pop-out 0.2s;
+  animation: pop-out 0.1s;
 }
 
 .fade-effect {
@@ -300,7 +300,7 @@ a {
 
   100% {
     opacity: 1;
-    transform: scale(1.2);
+    transform: scale(1.1);
   }
 }
 
