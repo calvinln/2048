@@ -1,8 +1,7 @@
-import { Game } from './model';
+import { Game, Location, Event, EventName } from './model';
 
 let transitionsInProgress = 0;
 let boxes = [];
-let bestScore = 0;
 let game;
 
 function deleteBox(row, col, boxes) {
@@ -41,7 +40,7 @@ function getBoxPosition(row, col, boardWidth) {
   return [topPosition, leftPosition];
 }
 
-function addColor(val, box) {
+function setColor(val, box) {
   switch (val) {
     case 2:
       box.classList.add('two');
@@ -82,69 +81,39 @@ function addColor(val, box) {
   }
 }
 
-function handleAdd(row, col, val, toMerge) {
+function addBox(location, value, effect) {
   let box = {};
-  box.rowBoxPosition = row;
-  box.colBoxPosition = col;
-  box.val = val;
+  box.rowBoxPosition = location.row;
+  box.colBoxPosition = location.column;
+  box.val = value;
   let domBox = document.createElement('div');
   box.theDiv = domBox;
   const boardWidth = document.getElementById('board').clientWidth;
-  const boxPos = getBoxPosition(row, col, boardWidth);
+  const boxPos = getBoxPosition(location.row, location.column, boardWidth);
   domBox.classList.add('overlay-box');
 
-  addColor(val, domBox);
+  setColor(value, domBox);
 
-  if (toMerge) {
-    domBox.classList.add('merge-effect');
-  } else {
-    domBox.classList.add('bounce-effect');
-  }
+  domBox.classList.add(effect);
+
   domBox.style.top = boxPos[0] + 'px';
   domBox.style.left = boxPos[1] + 'px';
-  domBox.innerHTML = val;
+  domBox.innerHTML = value;
   boxes.push(box);
   let container = document.getElementById('overlay-container');
 
   container.appendChild(domBox);
-
-  if (game.isGameOver()) {
-    let board = document.getElementById('board');
-    const listener = function() {
-      board.removeEventListener('animationend', listener);
-      let gameoverOverlay = document.createElement('div');
-      gameoverOverlay.id = 'gameover-overlay';
-      let message = document.createElement('p');
-      message.innerHTML = 'Game over!';
-      message.classList.add('message');
-      // let tryAgainBtn = document.createElement('button');
-      // tryAgainBtn.onclick = function() {
-      //   container.removeChild(gameoverOverlay);
-      //   backgroundContainer.classList.remove('fade-effect');
-      //   overlayContainer.classList.remove('fade-effect');
-      //   resetBoxVisuals();
-      // };
-      gameoverOverlay.appendChild(message);
-      // gameoverOverlay.appendChild(tryAgainBtn);
-      // tryAgainBtn.innerHTML = 'Try again';
-      // tryAgainBtn.classList.add('try-again');
-      board.appendChild(gameoverOverlay);
-    };
-
-    board.addEventListener('animationend', listener);
-    let backgroundContainer = document.getElementById('background-container');
-    let overlayContainer = document.getElementById('overlay-container');
-    backgroundContainer.classList.add('fade-effect');
-    overlayContainer.classList.add('fade-effect');
-    // board.classList.add('fade-effect');
-  }
 }
 
-function handleMove(transitionBox) {
-  const startRow = transitionBox.startRow;
-  const startCol = transitionBox.startCol;
-  const finalRow = transitionBox.finalRow;
-  const finalCol = transitionBox.finalCol;
+function handleAdd(event) {
+  addBox(event.startLocation, event.value, 'bounce-effect');
+}
+
+function handleMove(event) {
+  const startRow = event.startLocation.row;
+  const startCol = event.startLocation.column;
+  const finalRow = event.endLocation.row;
+  const finalCol = event.endLocation.column;
 
   const startBox = findBox(startRow, startCol, boxes);
   const boardWidth = document.getElementById('board').clientWidth;
@@ -163,22 +132,14 @@ function handleMove(transitionBox) {
   startBox.theDiv.addEventListener('transitionend', listener);
 }
 
-function handleMerge(transitionBox) {
-  const startRow = transitionBox.startRow;
-  const startCol = transitionBox.startCol;
-  const finalRow = transitionBox.finalRow;
-  const finalCol = transitionBox.finalCol;
+function handleMerge(event) {
+  const startRow = event.startLocation.row;
+  const startCol = event.startLocation.column;
+  const finalRow = event.endLocation.row;
+  const finalCol = event.endLocation.column;
   const startBox = findBox(startRow, startCol, boxes);
   const finalBox = findBox(finalRow, finalCol, boxes);
-  const finalVal = startBox.val + finalBox.val;
-
-  // let bestScoreElement = document.getElementById('best-score')[0];
-  let currentScoreElement = document.getElementById('current-score');
-  const newCurrentScore = game.getScore();
-  // const newBestScore = scores[1];
-
-  // bestScoreElement.innerHTML = newBestScore;
-  currentScoreElement.innerHTML = newCurrentScore;
+  const finalVal = event.value;
 
   const boardWidth = document.getElementById('board').clientWidth;
   const boxPos = getBoxPosition(finalRow, finalCol, boardWidth);
@@ -191,7 +152,7 @@ function handleMerge(transitionBox) {
     // remove both boxes to create the new box
     startBoxDiv.remove();
     finalBoxDiv.remove();
-    handleAdd(finalRow, finalCol, finalVal, true);
+    addBox(event.endLocation, event.value, 'merge-effect');
     transitionsInProgress -= 1;
   });
 
@@ -201,10 +162,21 @@ function handleMerge(transitionBox) {
   transitionsInProgress += 1;
 }
 
-export function run() {
-  game = new Game(handleAdd, handleMove, handleMerge);
-  game.restart();
+function eventHandler(event) {
+  let name = event.name;
+  if (name === 'move') {
+    handleMove(event);
+  } else if (name === 'merge') {
+    handleMerge(event);
+  } else {
+    handleAdd(event);
+  }
+}
 
+export function run() {
+  showBestScore(getBestScore());
+  game = new Game(eventHandler, true);
+  game.restart();
   const newGameButton = document.getElementById('new-game-btn');
   newGameButton.addEventListener('click', function() {
     const overlayContainer = document.getElementById('overlay-container');
@@ -219,6 +191,70 @@ export function run() {
     game.restart();
   });
 
+  function showGameOver() {
+    let board = document.getElementById('board');
+    const listener = function(event) {
+      board.removeEventListener('animationend', listener);
+      let gameoverOverlay = document.createElement('div');
+      gameoverOverlay.id = 'gameover-overlay';
+      let message = document.createElement('p');
+      message.innerHTML = 'Game over!';
+      message.classList.add('message');
+      // let tryAgainBtn = document.createElement('button');
+      // tryAgainBtn.onclick = function() {
+      //   container.removeChild(gameoverOverlay);
+      //   backgroundContainer.classList.remove('fade-effect');
+      //   overlayContainer.classList.remove('fade-effect');
+      //   resetBoxVisuals();
+      // };
+      gameoverOverlay.appendChild(message);
+      // gameoverOverlay.appendChild(tryAgainBtn);
+      // tryAgainBtn.innerHTML = 'Try again';
+      // tryAgainBtn.classList.add('try-again');
+      board.appendChild(gameoverOverlay);
+      event.stopPropagation();
+    };
+
+    board.addEventListener('animationend', listener(event));
+    let backgroundContainer = document.getElementById('background-container');
+    let overlayContainer = document.getElementById('overlay-container');
+    backgroundContainer.classList.add('fade-effect');
+    overlayContainer.classList.add('fade-effect');
+    // board.classList.add('fade-effect');
+  }
+
+  function updateScore(newScore, previousScore) {
+    let scoreDiff = newScore - previousScore;
+    if (scoreDiff > 0) {
+      let scoreAnimationElement = document.createElement('div');
+      let scoreBox = document.getElementById('current-score');
+      scoreBox.innerHTML = newScore;
+      scoreAnimationElement.innerHTML = '+' + scoreDiff;
+      scoreAnimationElement.id = 'score-animation';
+      let scoreContainer = document.getElementById('left-score-rectangle');
+      scoreContainer.appendChild(scoreAnimationElement);
+      scoreAnimationElement.addEventListener('animationend', function() {
+        document.getElementById('score-animation').remove();
+      });
+    }
+  }
+
+  function getBestScore() {
+    let currentBestScore = window.localStorage.getItem('bestScore');
+    if (currentBestScore === null) {
+      currentBestScore = 0;
+    }
+    return currentBestScore;
+  }
+
+  function setBestScore(bestScore) {
+    window.localStorage.setItem('bestScore', bestScore);
+  }
+
+  function showBestScore(bestScore) {
+    document.getElementById('best-score').innerHTML = bestScore;
+  }
+
   document.addEventListener('keydown', function(pressedKey) {
     // map arrowup to up for model
     let validKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
@@ -230,6 +266,12 @@ export function run() {
       if (transitionsInProgress !== 0) {
         return;
       }
+
+      if (game.isGameOver()) {
+        return;
+      }
+
+      let previousScore = game.getScore();
 
       switch (key) {
         case 'ArrowUp':
@@ -244,6 +286,15 @@ export function run() {
         case 'ArrowRight':
           game.slide('Right');
           break;
+      }
+      let newScore = game.getScore();
+      updateScore(newScore, previousScore);
+      if (newScore > getBestScore()) {
+        setBestScore(newScore);
+        showBestScore(newScore);
+      }
+      if (game.isGameOver()) {
+        showGameOver();
       }
     }
   });

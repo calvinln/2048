@@ -328,3 +328,22 @@ a {
   -ms-transition: none !important;
   transition: none !important;
 }
+
+@keyframes score-move-up {
+  0% {
+    top: 20px;
+    opacity: 1;
+  }
+  100% {
+    top: -20px;
+    opacity: 0;
+  }
+}
+
+#score-animation {
+  color: pink;
+  position: absolute;
+  top: 20px;
+  font-size: 30px;
+  animation: score-move-up 1s linear;
+}
