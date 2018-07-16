@@ -1,4 +1,4 @@
-import { Game, EventName } from './model';
+import { Game, EventName, Direction } from './model';
 
 let transitionsInProgress = 0;
 let boxes = [];
@@ -163,9 +163,9 @@ function handleMerge(event) {
 
 function eventHandler(event) {
   let name = event.name;
-  if (name === 'move') {
+  if (name === EventName.NUMBER_MOVED) {
     handleMove(event);
-  } else if (name === 'merge') {
+  } else if (name === EventName.NUMBER_MERGED) {
     handleMerge(event);
   } else {
     handleAdd(event);
@@ -273,16 +273,16 @@ export function run() {
 
       switch (key) {
         case 'ArrowUp':
-          game.slide('Up');
+          game.slide(Direction.UP);
           break;
         case 'ArrowDown':
-          game.slide('Down');
+          game.slide(Direction.DOWN);
           break;
         case 'ArrowLeft':
-          game.slide('Left');
+          game.slide(Direction.LEFT);
           break;
         case 'ArrowRight':
-          game.slide('Right');
+          game.slide(Direction.RIGHT);
           break;
       }
       let newScore = game.getScore();

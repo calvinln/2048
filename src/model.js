@@ -65,7 +65,7 @@ export class Game {
   slide(direction) {
     let events;
     switch (direction) {
-      case 'Up':
+      case Direction.UP:
         rotateBoardLeft(this.board_);
         events = this.slideBoardLeft_(this.board_);
         rotateBoardLeft(this.board_);
@@ -77,7 +77,7 @@ export class Game {
         }
         this.dispatchEvents_(events);
         break;
-      case 'Down':
+      case Direction.DOWN:
         rotateBoardRight(this.board_);
         events = this.slideBoardLeft_(this.board_);
         rotateBoardRight(this.board_);
@@ -94,11 +94,11 @@ export class Game {
         }
         this.dispatchEvents_(events);
         break;
-      case 'Left':
+      case Direction.LEFT:
         events = this.slideBoardLeft_(this.board_);
         this.dispatchEvents_(events);
         break;
-      case 'Right':
+      case Direction.RIGHT:
         // slide right only needs to worry about the change in col
         flipBoard(this.board_);
         events = this.slideBoardLeft_(this.board_);
@@ -196,7 +196,12 @@ export class Game {
       const col = emptySlot[1];
       this.board_[row][col] = newNumber;
       let startLocation = new Location(row, col);
-      let event = new Event('add', startLocation, null, newNumber);
+      let event = new Event(
+        EventName.NUMBER_ADDED,
+        startLocation,
+        null,
+        newNumber
+      );
       this.eventHandler_(event);
     }
   }
@@ -229,7 +234,12 @@ export class Game {
       if (row[currentIndex] === 0) {
         let startLocation = new Location(rowNumber, i);
         let endLocation = new Location(rowNumber, currentIndex);
-        let event = new Event('move', startLocation, endLocation, row[i]);
+        let event = new Event(
+          EventName.NUMBER_MOVED,
+          startLocation,
+          endLocation,
+          row[i]
+        );
         row[currentIndex] = row[i];
         events.push(event);
       }
@@ -240,7 +250,7 @@ export class Game {
         let startLocation = new Location(rowNumber, i);
         let endLocation = new Location(rowNumber, currentIndex);
         let event = new Event(
-          'merge',
+          EventName.NUMBER_MERGED,
           startLocation,
           endLocation,
           row[currentIndex]
@@ -257,7 +267,7 @@ export class Game {
           let startLocation = new Location(rowNumber, i);
           let endLocation = new Location(rowNumber, currentIndex + 1);
           let event = new Event(
-            'move',
+            EventName.NUMBER_MOVED,
             startLocation,
             endLocation,
             row[currentIndex + 1]
@@ -269,7 +279,12 @@ export class Game {
           row[i - 1] = row[i];
           let startLocation = new Location(rowNumber, i);
           let endLocation = new Location(rowNumber, i - 1);
-          let event = new Event('move', startLocation, endLocation, row[i - 1]);
+          let event = new Event(
+            EventName.NUMBER_MOVED,
+            startLocation,
+            endLocation,
+            row[i - 1]
+          );
           events.push(event);
         }
       } else {
