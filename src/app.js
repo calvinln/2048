@@ -175,6 +175,9 @@ function eventHandler(event) {
 export function run() {
   showBestScore(getBestScore());
   game = new Game(eventHandler, false);
+  if (window.location.href === 'https://2048.calvinln.com/test') {
+    game = new Game(eventHandler, true);
+  }
   game.restart();
   const newGameButton = document.getElementById('new-game-btn');
   newGameButton.addEventListener('click', function() {
