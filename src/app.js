@@ -1,4 +1,4 @@
-import { Game, Location, Event, EventName } from './model';
+import { Game, EventName } from './model';
 
 let transitionsInProgress = 0;
 let boxes = [];
@@ -125,7 +125,7 @@ function handleMove(event) {
   startBox.rowBoxPosition = finalRow;
   transitionsInProgress += 1;
 
-  const listener = function(event) {
+  const listener = function() {
     transitionsInProgress -= 1;
     startBox.theDiv.removeEventListener('transitionend', listener);
   };
@@ -139,7 +139,6 @@ function handleMerge(event) {
   const finalCol = event.endLocation.column;
   const startBox = findBox(startRow, startCol, boxes);
   const finalBox = findBox(finalRow, finalCol, boxes);
-  const finalVal = event.value;
 
   const boardWidth = document.getElementById('board').clientWidth;
   const boxPos = getBoxPosition(finalRow, finalCol, boardWidth);
@@ -175,7 +174,7 @@ function eventHandler(event) {
 
 export function run() {
   showBestScore(getBestScore());
-  game = new Game(eventHandler, true);
+  game = new Game(eventHandler, false);
   game.restart();
   const newGameButton = document.getElementById('new-game-btn');
   newGameButton.addEventListener('click', function() {
@@ -220,7 +219,6 @@ export function run() {
     let overlayContainer = document.getElementById('overlay-container');
     backgroundContainer.classList.add('fade-effect');
     overlayContainer.classList.add('fade-effect');
-    // board.classList.add('fade-effect');
   }
 
   function updateScore(newScore, previousScore) {
