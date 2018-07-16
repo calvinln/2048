@@ -80,11 +80,9 @@ export class Game {
       case 'Down':
         rotateBoardRight(this.board_);
         events = this.slideBoardLeft_(this.board_);
-        // rotateBoardLeft(this.board_);
         rotateBoardRight(this.board_);
         rotateBoardRight(this.board_);
         rotateBoardRight(this.board_);
-        // console.log(events);
 
         for (let i = 0; i < events.length; i++) {
           let event = events[i];
@@ -108,26 +106,8 @@ export class Game {
 
         for (let i = 0; i < events.length; i++) {
           let event = events[i];
-          let initialColStart;
-          if (event.startLocation.column === 1) {
-            event.startLocation.column = 2;
-          } else if (event.startLocation.column === 2) {
-            event.startLocation.column = 1;
-          } else if (event.startLocation.column === 0) {
-            event.startLocation.column = 3;
-          } else {
-            event.startLocation.column = 0;
-          }
-
-          if (event.endLocation.column === 0) {
-            event.endLocation.column = 3;
-          } else if (event.endLocation.column === 1) {
-            event.endLocation.column = 2;
-          } else if (event.endLocation.column === 2) {
-            event.endLocation.column = 1;
-          } else {
-            event.endLocation.column = 0;
-          }
+          event.startLocation.column = 3 - event.startLocation.column;
+          event.endLocation.column = 3 - event.endLocation.column;
         }
         this.dispatchEvents_(events);
         break;
@@ -142,7 +122,6 @@ export class Game {
   }
 
   getBoard() {
-    // TODO: We need to return a copy of the board here so that it can't be mutated.
     return copyBoard(this.board_);
   }
 
