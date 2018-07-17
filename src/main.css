@@ -351,3 +351,8 @@ a {
   font-size: 30px;
   animation: score-move-up 1s linear;
 }
+
+#github-icon {
+  text-align: center;
+  margin-top: 20px;
+}
