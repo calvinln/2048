@@ -230,10 +230,11 @@ export class Game {
         continue;
       }
 
+      let startLocation = new Location(rowNumber, i);
+      let endLocation = new Location(rowNumber, currentIndex);
+
       // if currentIndex is 0, swap it with the next index value
       if (row[currentIndex] === 0) {
-        let startLocation = new Location(rowNumber, i);
-        let endLocation = new Location(rowNumber, currentIndex);
         let event = new Event(
           EventName.NUMBER_MOVED,
           startLocation,
@@ -243,12 +244,9 @@ export class Game {
         row[currentIndex] = row[i];
         events.push(event);
       }
-
       // currentIndex value is the same as i, merge into one
       else if (row[currentIndex] === row[i]) {
         row[currentIndex] += row[i];
-        let startLocation = new Location(rowNumber, i);
-        let endLocation = new Location(rowNumber, currentIndex);
         let event = new Event(
           EventName.NUMBER_MERGED,
           startLocation,
@@ -261,32 +259,8 @@ export class Game {
       }
       // currentIndex is not same value as i AND value before i is 0
       else if (row[currentIndex] !== row[i] && row[i - 1] === 0) {
-        // if currentIndex + 1 is 0, we move i there. ex [2, 0, 0, 4]
-        if (row[currentIndex + 1] === 0) {
-          row[currentIndex + 1] = row[i];
-          let startLocation = new Location(rowNumber, i);
-          let endLocation = new Location(rowNumber, currentIndex + 1);
-          let event = new Event(
-            EventName.NUMBER_MOVED,
-            startLocation,
-            endLocation,
-            row[currentIndex + 1]
-          );
-          events.push(event);
-          currentIndex += 1;
-        } else {
-          // moving i to i - 1, there isn't consecutive zeroes, just 1 zero before it
-          row[i - 1] = row[i];
-          let startLocation = new Location(rowNumber, i);
-          let endLocation = new Location(rowNumber, i - 1);
-          let event = new Event(
-            EventName.NUMBER_MOVED,
-            startLocation,
-            endLocation,
-            row[i - 1]
-          );
-          events.push(event);
-        }
+        currentIndex += 1;
+        i -= 1;
       } else {
         currentIndex += 1;
         continue;
