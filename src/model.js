@@ -56,6 +56,21 @@ export class Game {
     this.eventHandler_ = eventHandler;
   }
 
+  reload(board, score) {
+    this.score_ = score;
+    this.board_ = board;
+    for (let i = 0; i < 4; i++) {
+      for (let j = 0; j < 4; j++) {
+        let val = this.board_[i][j];
+        if (val !== 0) {
+          this.eventHandler_(
+            new Event(EventName.NUMBER_ADDED, new Location(i, j), null, val)
+          );
+        }
+      }
+    }
+  }
+
   restart() {
     this.score_ = 0;
     this.board_ = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];

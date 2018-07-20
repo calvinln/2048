@@ -173,12 +173,21 @@ function eventHandler(event) {
 }
 
 export function run() {
-  showBestScore(getBestScore());
+  showBestScore(getSavedBestScore());
   game = new Game(eventHandler, false);
   if (window.location.href === 'https://2048.calvinln.com/test') {
     game = new Game(eventHandler, true);
   }
-  game.restart();
+
+  let savedBoard = getSavedBoard();
+  if (savedBoard) {
+    let savedScore = getSavedScore();
+    updateScore(savedScore, 0);
+    game.reload(savedBoard, savedScore);
+  } else {
+    game.restart();
+  }
+
   const newGameButton = document.getElementById('new-game-btn');
   newGameButton.addEventListener('click', function() {
     const overlayContainer = document.getElementById('overlay-container');
@@ -191,6 +200,8 @@ export function run() {
 
     boxes = [];
     game.restart();
+    saveBoard(game.getBoard());
+    saveScore(game.getScore());
   });
 
   function showGameOver() {
@@ -240,15 +251,35 @@ export function run() {
     }
   }
 
-  function getBestScore() {
-    let currentBestScore = window.localStorage.getItem('bestScore');
-    if (currentBestScore === null) {
-      currentBestScore = 0;
-    }
-    return currentBestScore;
+  function getSavedBoard() {
+    return JSON.parse(window.localStorage.getItem('board'));
   }
 
-  function setBestScore(bestScore) {
+  function saveBoard(board) {
+    window.localStorage.setItem('board', JSON.stringify(board));
+  }
+
+  function getSavedScore() {
+    let savedScore = window.localStorage.getItem('score');
+    if (savedScore === null) {
+      savedScore = 0;
+    }
+    return parseInt(savedScore, 10);
+  }
+
+  function saveScore(score) {
+    window.localStorage.setItem('score', score);
+  }
+
+  function getSavedBestScore() {
+    let savedBestScore = window.localStorage.getItem('bestScore');
+    if (savedBestScore === null) {
+      savedBestScore = 0;
+    }
+    return parseInt(savedBestScore, 10);
+  }
+
+  function saveBestScore(bestScore) {
     window.localStorage.setItem('bestScore', bestScore);
   }
 
@@ -290,10 +321,12 @@ export function run() {
       }
       let newScore = game.getScore();
       updateScore(newScore, previousScore);
-      if (newScore > getBestScore()) {
-        setBestScore(newScore);
+      if (newScore > getSavedBestScore()) {
+        saveBestScore(newScore);
         showBestScore(newScore);
       }
+      saveBoard(game.getBoard());
+      saveScore(game.getScore());
       if (game.isGameOver()) {
         showGameOver();
       }
