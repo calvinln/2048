@@ -1,11 +1,15 @@
 # 2048 &middot; [![CircleCI](https://circleci.com/gh/calvinln/2048/tree/master.svg?style=svg)](https://circleci.com/gh/calvinln/2048/tree/master)
 
-### Development
+## URL
+
+[2048.calvinln.com](https://2048.calvinln.com)
+
+## Development
 
 1.  Clone the repository.
 2.  Run `npm install`.
 3.  Run `npm start` to start the local server.
 
-### Deploy
+## Deployment
 
-Pushing to master triggers deployment. To deploy manually, run `npm deploy`.
+Commits to master branch is automatically built and deployed to Firebase by CircieCI.
