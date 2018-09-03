@@ -287,6 +287,29 @@ export function run() {
     document.getElementById('best-score').innerHTML = bestScore;
   }
 
+  function layoutBoard() {
+    for (let i = 0; i < boxes.length; i++) {
+      let box = boxes[i];
+      const boardWidth = document.getElementById('board').clientWidth;
+      const boxPos = getBoxPosition(
+        box.rowBoxPosition,
+        box.colBoxPosition,
+        boardWidth
+      );
+      box.theDiv.style.top = boxPos[0] + 'px';
+      box.theDiv.style.left = boxPos[1] + 'px';
+    }
+  }
+
+  window.addEventListener('resize', function(event) {
+    event.preventDefault();
+    layoutBoard();
+  });
+
+  // function detectSwipe() {
+  //   document.addEventListener('touchstart', )
+  // }
+
   document.addEventListener('keydown', function(pressedKey) {
     // map arrowup to up for model
     let validKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
@@ -330,6 +353,7 @@ export function run() {
       if (game.isGameOver()) {
         showGameOver();
       }
+      printBoxes(boxes);
     }
   });
 }

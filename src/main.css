@@ -2,6 +2,7 @@ body {
   background-color: #faf8ef;
   font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
   color: #776e65;
+  text-align: center;
 }
 
 #head-paragraph {
@@ -95,8 +96,6 @@ a {
 
 #bottom-paragraph {
   width: 500px;
-  height: 500px;
-  /* border: dashed blue; */
   margin: 0 auto;
   position: relative;
 }
@@ -141,18 +140,20 @@ a {
 #board {
   width: 500px;
   height: 500px;
-  margin: 0 auto;
+  background-color: #b8aea4;
+  border-radius: 6px;
+  font-size: 0;
+  display: inline-block;
 }
 
 #background-container {
   width: 500px;
-  height: 500px;
-  margin: 0 auto;
-  background-color: #b8aea4;
-  border-radius: 6px;
-  font-size: 0;
   padding: 7.2px;
   box-sizing: border-box;
+  position: absolute;
+}
+
+#overlay-container {
   position: absolute;
 }
 
@@ -165,16 +166,6 @@ a {
   width: 107px;
   margin: 7.2px;
   display: inline-block;
-}
-
-#overlay-container {
-  width: 500px;
-  height: 500px;
-  border-radius: 6px;
-  font-size: 0;
-  padding: 7.2px;
-  box-sizing: border-box;
-  position: absolute;
 }
 
 .overlay-box {
@@ -355,4 +346,35 @@ a {
 #github-icon {
   text-align: center;
   margin-top: 20px;
+}
+
+@media (max-width: 700px) {
+  #overlay-container {
+    width: 280px;
+    min-width: 280px;
+    height: 280px;
+  }
+
+  #board {
+    width: 280px;
+    min-width: 280px;
+    height: 280px;
+  }
+
+  #background-container {
+    width: 280px;
+    height: 280px;
+  }
+
+  .background-square {
+    width: 59px;
+    height: 59px;
+    margin: 4px;
+  }
+
+  .overlay-box {
+    width: 59.92px;
+    height: 59.92px;
+    margin: 4.032px;
+  }
 }
