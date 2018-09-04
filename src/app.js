@@ -134,6 +134,128 @@ function eventHandler(event) {
   }
 }
 
+function showGameOver() {
+  let board = document.getElementById('board');
+  const listener = function(event) {
+    board.removeEventListener('animationend', listener);
+    let gameoverOverlay = document.createElement('div');
+    gameoverOverlay.id = 'gameover-overlay';
+    let message = document.createElement('p');
+    message.innerHTML = 'Game over!';
+    // let tryAgainBtn = document.createElement('button');
+    // tryAgainBtn.onclick = function() {
+    //   container.removeChild(gameoverOverlay);
+    //   backgroundContainer.classList.remove('fade-effect');
+    //   overlayContainer.classList.remove('fade-effect');
+    //   resetBoxVisuals();
+    // };
+    gameoverOverlay.appendChild(message);
+    // gameoverOverlay.appendChild(tryAgainBtn);
+    // tryAgainBtn.innerHTML = 'Try again';
+    // tryAgainBtn.classList.add('try-again');
+    board.appendChild(gameoverOverlay);
+    event.stopPropagation();
+  };
+
+  board.addEventListener('animationend', listener(event));
+  let backgroundContainer = document.getElementById('background-container');
+  let overlayContainer = document.getElementById('overlay-container');
+  backgroundContainer.classList.add('fade-effect');
+  overlayContainer.classList.add('fade-effect');
+}
+
+function updateScore(newScore, previousScore) {
+  let scoreDiff = newScore - previousScore;
+  if (scoreDiff > 0) {
+    let scoreAnimationElement = document.createElement('div');
+    let scoreBox = document.getElementById('current-score');
+    scoreBox.innerHTML = newScore;
+    scoreAnimationElement.innerHTML = '+' + scoreDiff;
+    scoreAnimationElement.id = 'score-animation';
+    let scoreContainer = document.getElementById('left-score-rectangle');
+    scoreContainer.appendChild(scoreAnimationElement);
+    scoreAnimationElement.addEventListener('animationend', function() {
+      document.getElementById('score-animation').remove();
+    });
+  }
+}
+
+function getSavedBoard() {
+  return JSON.parse(window.localStorage.getItem('board'));
+}
+
+function saveBoard(board) {
+  window.localStorage.setItem('board', JSON.stringify(board));
+}
+
+function getSavedScore() {
+  let savedScore = window.localStorage.getItem('score');
+  if (savedScore === null) {
+    savedScore = 0;
+  }
+  return parseInt(savedScore, 10);
+}
+
+function saveScore(score) {
+  window.localStorage.setItem('score', score);
+}
+
+function getSavedBestScore() {
+  let savedBestScore = window.localStorage.getItem('bestScore');
+  if (savedBestScore === null) {
+    savedBestScore = 0;
+  }
+  return parseInt(savedBestScore, 10);
+}
+
+function saveBestScore(bestScore) {
+  window.localStorage.setItem('bestScore', bestScore);
+}
+
+function showBestScore(bestScore) {
+  document.getElementById('best-score').innerHTML = bestScore;
+}
+
+function layoutBoard() {
+  const boardWidth = document.getElementById('board').clientWidth;
+  for (let i = 0; i < boxes.length; i++) {
+    let box = boxes[i];
+    const boxPos = getBoxPosition(
+      box.rowBoxPosition,
+      box.colBoxPosition,
+      boardWidth
+    );
+    box.theDiv.style.top = boxPos[0] + 'px';
+    box.theDiv.style.left = boxPos[1] + 'px';
+  }
+}
+
+function slide(direction) {
+  if (transitionsInProgress !== 0) {
+    return;
+  }
+
+  if (game.isGameOver()) {
+    return;
+  }
+
+  let previousScore = game.getScore();
+
+  game.slide(direction);
+
+  let newScore = game.getScore();
+  updateScore(newScore, previousScore);
+  if (newScore > getSavedBestScore()) {
+    saveBestScore(newScore);
+    showBestScore(newScore);
+  }
+  saveBoard(game.getBoard());
+  saveScore(game.getScore());
+  if (game.isGameOver()) {
+    showGameOver();
+  }
+}
+
 export function run() {
   showBestScore(getSavedBestScore());
   game = new Game(eventHandler, false);
@@ -166,102 +288,6 @@ export function run() {
     saveScore(game.getScore());
   });
 
-  function showGameOver() {
-    let board = document.getElementById('board');
-    const listener = function(event) {
-      board.removeEventListener('animationend', listener);
-      let gameoverOverlay = document.createElement('div');
-      gameoverOverlay.id = 'gameover-overlay';
-      let message = document.createElement('p');
-      message.innerHTML = 'Game over!';
-      // let tryAgainBtn = document.createElement('button');
-      // tryAgainBtn.onclick = function() {
-      //   container.removeChild(gameoverOverlay);
-      //   backgroundContainer.classList.remove('fade-effect');
-      //   overlayContainer.classList.remove('fade-effect');
-      //   resetBoxVisuals();
-      // };
-      gameoverOverlay.appendChild(message);
-      // gameoverOverlay.appendChild(tryAgainBtn);
-      // tryAgainBtn.innerHTML = 'Try again';
-      // tryAgainBtn.classList.add('try-again');
-      board.appendChild(gameoverOverlay);
-      event.stopPropagation();
-    };
-
-    board.addEventListener('animationend', listener(event));
-    let backgroundContainer = document.getElementById('background-container');
-    let overlayContainer = document.getElementById('overlay-container');
-    backgroundContainer.classList.add('fade-effect');
-    overlayContainer.classList.add('fade-effect');
-  }
-
-  function updateScore(newScore, previousScore) {
-    let scoreDiff = newScore - previousScore;
-    if (scoreDiff > 0) {
-      let scoreAnimationElement = document.createElement('div');
-      let scoreBox = document.getElementById('current-score');
-      scoreBox.innerHTML = newScore;
-      scoreAnimationElement.innerHTML = '+' + scoreDiff;
-      scoreAnimationElement.id = 'score-animation';
-      let scoreContainer = document.getElementById('left-score-rectangle');
-      scoreContainer.appendChild(scoreAnimationElement);
-      scoreAnimationElement.addEventListener('animationend', function() {
-        document.getElementById('score-animation').remove();
-      });
-    }
-  }
-
-  function getSavedBoard() {
-    return JSON.parse(window.localStorage.getItem('board'));
-  }
-
-  function saveBoard(board) {
-    window.localStorage.setItem('board', JSON.stringify(board));
-  }
-
-  function getSavedScore() {
-    let savedScore = window.localStorage.getItem('score');
-    if (savedScore === null) {
-      savedScore = 0;
-    }
-    return parseInt(savedScore, 10);
-  }
-
-  function saveScore(score) {
-    window.localStorage.setItem('score', score);
-  }
-
-  function getSavedBestScore() {
-    let savedBestScore = window.localStorage.getItem('bestScore');
-    if (savedBestScore === null) {
-      savedBestScore = 0;
-    }
-    return parseInt(savedBestScore, 10);
-  }
-
-  function saveBestScore(bestScore) {
-    window.localStorage.setItem('bestScore', bestScore);
-  }
-
-  function showBestScore(bestScore) {
-    document.getElementById('best-score').innerHTML = bestScore;
-  }
-
-  function layoutBoard() {
-    const boardWidth = document.getElementById('board').clientWidth;
-    for (let i = 0; i < boxes.length; i++) {
-      let box = boxes[i];
-      const boxPos = getBoxPosition(
-        box.rowBoxPosition,
-        box.colBoxPosition,
-        boardWidth
-      );
-      box.theDiv.style.top = boxPos[0] + 'px';
-      box.theDiv.style.left = boxPos[1] + 'px';
-    }
-  }
-
   window.addEventListener('resize', function(event) {
     layoutBoard();
   });
@@ -274,42 +300,40 @@ export function run() {
     if (validKeys.includes(key)) {
       pressedKey.preventDefault();
 
-      if (transitionsInProgress !== 0) {
-        return;
-      }
-
-      if (game.isGameOver()) {
-        return;
-      }
-
-      let previousScore = game.getScore();
-
       switch (key) {
         case 'ArrowUp':
-          game.slide(Direction.UP);
+          slide(Direction.UP);
           break;
         case 'ArrowDown':
-          game.slide(Direction.DOWN);
+          slide(Direction.DOWN);
           break;
         case 'ArrowLeft':
-          game.slide(Direction.LEFT);
+          slide(Direction.LEFT);
           break;
         case 'ArrowRight':
-          game.slide(Direction.RIGHT);
+          slide(Direction.RIGHT);
           break;
       }
-      let newScore = game.getScore();
-      updateScore(newScore, previousScore);
-      if (newScore > getSavedBestScore()) {
-        saveBestScore(newScore);
-        showBestScore(newScore);
-      }
-      saveBoard(game.getBoard());
-      saveScore(game.getScore());
-      if (game.isGameOver()) {
-        showGameOver();
-      }
-      printBoxes(boxes);
     }
+  });
+
+  const board = document.querySelector('#board');
+  const options = {
+    preventDefault: true
+  };
+  const hammer = new Hammer(board, options);
+  hammer.on('swipeleft', function(e) {
+    slide(Direction.LEFT);
+  });
+  hammer.on('swiperight', function(e) {
+    slide(Direction.RIGHT);
+  });
+  hammer.on('swipeup', function(e) {
+    console.log('123');
+
+    slide(Direction.UP);
+  });
+  hammer.on('swipedown', function(e) {
+    slide(Direction.DOWN);
   });
 }
