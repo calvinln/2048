@@ -34,51 +34,13 @@ function findBox(row, col, boxes) {
 function getBoxPosition(row, col, boardWidth) {
   const boxSize = (boardWidth * 107) / 500;
   const space = (boardWidth - 4 * boxSize) / 5;
-  const anchorOffset = space / 2;
-  const topPosition = anchorOffset + space * row + boxSize * row;
-  const leftPosition = anchorOffset + space * col + boxSize * col;
+  const topPosition = space * row + boxSize * row;
+  const leftPosition = space * col + boxSize * col;
   return [topPosition, leftPosition];
 }
 
 function setColor(val, box) {
-  switch (val) {
-    case 2:
-      box.classList.add('two');
-      break;
-    case 4:
-      box.classList.add('four');
-      break;
-    case 8:
-      box.classList.add('eight');
-      break;
-    case 16:
-      box.classList.add('one-six');
-      break;
-    case 32:
-      box.classList.add('three-two');
-      break;
-    case 64:
-      box.classList.add('six-four');
-      break;
-    case 128:
-      box.classList.add('one-two-eight');
-      break;
-    case 256:
-      box.classList.add('two-five-six');
-      break;
-    case 512:
-      box.classList.add('five-one-two');
-      break;
-    case 1024:
-      box.classList.add('one-zero-two-four');
-      break;
-    case 2048:
-      box.classList.add('two-zero-four-eight');
-      break;
-    case 4096:
-      box.classList.add('four-zero-nine-six');
-      break;
-  }
+  box.classList.add('b' + String(val));
 }
 
 function addBox(location, value, effect) {
@@ -212,7 +174,6 @@ export function run() {
       gameoverOverlay.id = 'gameover-overlay';
       let message = document.createElement('p');
       message.innerHTML = 'Game over!';
-      message.classList.add('message');
       // let tryAgainBtn = document.createElement('button');
       // tryAgainBtn.onclick = function() {
       //   container.removeChild(gameoverOverlay);
@@ -288,9 +249,9 @@ export function run() {
   }
 
   function layoutBoard() {
+    const boardWidth = document.getElementById('board').clientWidth;
     for (let i = 0; i < boxes.length; i++) {
       let box = boxes[i];
-      const boardWidth = document.getElementById('board').clientWidth;
       const boxPos = getBoxPosition(
         box.rowBoxPosition,
         box.colBoxPosition,
@@ -302,13 +263,8 @@ export function run() {
   }
 
   window.addEventListener('resize', function(event) {
-    event.preventDefault();
     layoutBoard();
   });
-
-  // function detectSwipe() {
-  //   document.addEventListener('touchstart', )
-  // }
 
   document.addEventListener('keydown', function(pressedKey) {
     // map arrowup to up for model
