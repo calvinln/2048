@@ -2,6 +2,8 @@
  * Location represents a location on the game board by a row number and a column number.
  * Row 0 is the top-most row. Column 0 is the left-most column.
  */
+
+// Model
 export class Location {
   constructor(row, column) {
     this.row = row;
@@ -81,9 +83,9 @@ export class Game {
     let events;
     switch (direction) {
       case Direction.UP:
-        rotateBoardLeft(this.board_);
+        flipDiagonally(this.board_);
         events = this.slideBoardLeft_(this.board_);
-        rotateBoardLeft(this.board_);
+        flipDiagonally(this.board_);
 
         for (let i = 0; i < events.length; i++) {
           let event = events[i];
@@ -93,11 +95,11 @@ export class Game {
         this.dispatchEvents_(events);
         break;
       case Direction.DOWN:
-        rotateBoardRight(this.board_);
+        flipDiagonally(this.board_);
+        flipHorizontally(this.board_);
         events = this.slideBoardLeft_(this.board_);
-        rotateBoardRight(this.board_);
-        rotateBoardRight(this.board_);
-        rotateBoardRight(this.board_);
+        flipHorizontally(this.board_);
+        flipDiagonally(this.board_);
 
         for (let i = 0; i < events.length; i++) {
           let event = events[i];
@@ -115,9 +117,9 @@ export class Game {
         break;
       case Direction.RIGHT:
         // slide right only needs to worry about the change in col
-        flipBoard(this.board_);
+        flipHorizontally(this.board_);
         events = this.slideBoardLeft_(this.board_);
-        flipBoard(this.board_);
+        flipHorizontally(this.board_);
 
         for (let i = 0; i < events.length; i++) {
           let event = events[i];
@@ -300,13 +302,13 @@ function copyBoard(board) {
   return copy;
 }
 
-function flipBoard(board) {
+function flipHorizontally(board) {
   for (let i = 0; i < 4; i++) {
     board[i] = board[i].reverse();
   }
 }
 
-function rotateBoardLeft(board) {
+function flipDiagonally(board) {
   let copy = copyBoard(board);
   for (let i = 0; i < 4; i++) {
     board[i][0] = copy[0][i];
@@ -314,9 +316,4 @@ function rotateBoardLeft(board) {
     board[i][2] = copy[2][i];
     board[i][3] = copy[3][i];
   }
-}
-
-function rotateBoardRight(board) {
-  rotateBoardLeft(board);
-  flipBoard(board);
 }
