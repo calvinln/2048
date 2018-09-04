@@ -477,34 +477,3 @@ hr {
     animation: score-move-up 1s linear;
   }
 }
-
-@media (max-width: 700px) {
-  #overlay-container {
-    width: 280px;
-    min-width: 280px;
-    height: 280px;
-  }
-
-  #board {
-    width: 280px;
-    min-width: 280px;
-    height: 280px;
-  }
-
-  #background-container {
-    width: 280px;
-    height: 280px;
-  }
-
-  .background-square {
-    width: 59px;
-    height: 59px;
-    margin: 4px;
-  }
-
-  .overlay-box {
-    width: 59.92px;
-    height: 59.92px;
-    margin: 4.032px;
-  }
-}
