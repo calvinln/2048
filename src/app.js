@@ -322,6 +322,8 @@ export function run() {
     preventDefault: true
   };
   const hammer = new Hammer(board, options);
+  hammer.get('swipe').set({ direction: Hammer.DIRECTION_ALL });
+
   hammer.on('swipeleft', function(e) {
     slide(Direction.LEFT);
   });
@@ -330,7 +332,6 @@ export function run() {
   });
   hammer.on('swipeup', function(e) {
     console.log('123');
-
     slide(Direction.UP);
   });
   hammer.on('swipedown', function(e) {
