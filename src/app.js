@@ -1,3 +1,5 @@
+// Controller
+
 import { Game, EventName, Direction } from './model';
 
 let transitionsInProgress = 0;
@@ -331,7 +333,6 @@ export function run() {
     slide(Direction.RIGHT);
   });
   hammer.on('swipeup', function(e) {
-    console.log('123');
     slide(Direction.UP);
   });
   hammer.on('swipedown', function(e) {
