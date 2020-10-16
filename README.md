@@ -12,4 +12,4 @@
 
 ## Deployment
 
-Commits to master branch is automatically built and deployed to Firebase by CircieCI.
+Commits to master branch is automatically built and deployed to Firebase by CircleCI.
